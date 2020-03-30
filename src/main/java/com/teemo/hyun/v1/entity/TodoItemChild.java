@@ -24,8 +24,7 @@ import lombok.NoArgsConstructor;
 		uniqueConstraints = { // UNIQUE 설정: child_id, parent_id
 		@UniqueConstraint(
 				columnNames = { "child_id", "parent_id" }
-	)
-} )
+		) } )
 public class TodoItemChild {
 
 	@Id

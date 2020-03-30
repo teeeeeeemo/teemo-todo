@@ -161,6 +161,17 @@ public class TodoService {
 		todoItemRepository.delete( item );
 	}
 	
+	@Transactional
+	public void deleteTodoItemChild( Long parentId, Long childId ) {
+		//
+		TodoItemChild itemChild = todoItemChildRepository.findByParentIdAndChildId( parentId, childId );
+		if ( itemChild == null ) {
+			throw new CNotFoundException( CommonConstant.Todo.NOT_FOUND );
+		} 
+
+		todoItemChildRepository.delete( itemChild );
+	}
+	
 	/* Todo Page List 조회: isDone */
 	public Integer[] getTodoPageListByIsDone( Integer curPageNum, Boolean isDone ) {
 		//

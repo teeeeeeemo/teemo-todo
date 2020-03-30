@@ -294,4 +294,27 @@ public class TodoController {
 		return ResponseEntity.ok( commonResponse );
 	}
 	
+	/* Delete Todo Item Child */
+	@DeleteMapping( value = "/remove-child/{parentId}" )
+	public ResponseEntity< CommonResponse > deleteTodoItemChild( @PathVariable Long parentId, 
+																 @RequestBody TodoItemChild itemChild ) {
+		//
+		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		
+		CommonResponse commonResponse = CommonResponse.builder()
+												      .code( CommonConstant.Common.SUCCESS_CODE )
+												      .message( CommonConstant.Common.SUCCESS_MESSAGE )
+												      .data( null )
+												      .build();
+		
+		if ( parentId.equals( itemChild.getChildId() ) ) {
+			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+		}
+		
+		todoService.deleteTodoItemChild( parentId, itemChild.getChildId() );
+		
+		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		return ResponseEntity.ok( commonResponse );
+	}
+	
 }

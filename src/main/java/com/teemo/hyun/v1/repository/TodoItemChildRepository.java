@@ -8,5 +8,10 @@ import com.teemo.hyun.v1.entity.TodoItemChild;
 @Repository
 public interface TodoItemChildRepository extends JpaRepository< TodoItemChild, Long > {
 
+	/* Find One */
+	TodoItemChild findByParentIdAndChildId( Long parentId, Long childId );
+	
+	/* Delete */
+	void deleteByChildId( Long childId );
 	
 }
