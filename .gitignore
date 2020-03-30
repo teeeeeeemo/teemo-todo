@@ -1,30 +1,84 @@
-HELP.md
+# Ignore Gradle project-specific cache directory
 .gradle
+
+# Ignore Gradle build output directory
+build
+/.project
+/.classpath
+
+# Directories #
 /build/
-!gradle/wrapper/gradle-wrapper.jar
+/bin/
+target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
+# OS Files #
+.DS_Store
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.db
+
+######################
+# Windows
+######################
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+######################
+# OSX
+######################
+
+.DS_Store
+.svn
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+
+######################
+# Eclipse
+######################
+
+*.pydevproject
 .project
-.settings
-.springBeans
-.sts4-cache
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+/src/main/resources/rebel.xml
+# External tool builders
+.externalToolBuilders/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-/out/
+# Locally stored "Eclipse launch configurations"
+*.launch
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# CDT-specific
+.cproject
 
-### VS Code ###
-.vscode/
+# PDT-specific
+.buildpath
+
+# LOG
+*.log
+*.bak
+*.gz

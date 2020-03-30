@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.teemo.hyun.v1.common.advice.exception.CNotFoundException;
 import com.teemo.hyun.v1.common.constant.CommonConstant;
 import com.teemo.hyun.v1.entity.TodoItem;
+import com.teemo.hyun.v1.entity.TodoItemChild;
+import com.teemo.hyun.v1.repository.TodoItemChildRepository;
 import com.teemo.hyun.v1.repository.TodoItemRepository;
 
 @Service
@@ -23,6 +25,9 @@ public class TodoService {
 	@Autowired
 	private TodoItemRepository todoItemRepository;
 	
+	@Autowired
+	private TodoItemChildRepository todoItemChildRepository;
+	
 	private static final int BLOCK_PAGE_NUM_COUNT = 10;
 	private static final int PAGE_POST_COUNT = 8; // 8 item per 1 page 
 	
@@ -30,6 +35,12 @@ public class TodoService {
 	public TodoItem saveTodoItem( TodoItem todoItem ) {
 		//
 		return todoItemRepository.save( todoItem );
+	}
+	
+	/* Todo Item Child 추가 */
+	public TodoItemChild saveTodoItemChild( TodoItemChild todoItemChild ) {
+		//
+		return todoItemChildRepository.save( todoItemChild );
 	}
 	
 	/* Todo List 조회 */

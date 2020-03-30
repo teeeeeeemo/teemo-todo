@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teemo.hyun.v1.common.advice.exception.CBadRequestException;
 import com.teemo.hyun.v1.common.constant.CommonConstant;
 import com.teemo.hyun.v1.entity.TodoItem;
+import com.teemo.hyun.v1.entity.TodoItemChild;
 import com.teemo.hyun.v1.model.CommonResponse;
 import com.teemo.hyun.v1.service.TodoService;
 
@@ -58,6 +59,40 @@ public class TodoController {
 		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		return ResponseEntity.ok( commonResponse );
 	}
+	
+	/* Post Todo Item Child */
+	@PostMapping( value = "/add-child/{parentId}" )
+	public ResponseEntity< CommonResponse > createTodoItemChild( @PathVariable Long parentId,
+																 @RequestBody TodoItemChild itemChild ) {
+		//
+		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		
+		if ( parentId.equals( itemChild.getChildId() ) ) {
+			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+		}
+		
+		TodoItem itemParent = todoService.getTodoItemOne( parentId );
+
+		List< TodoItemChild > childList = itemParent.getTodoChildList();
+		for( TodoItemChild todoItemChild: childList ) {
+			if ( todoItemChild.getChildId().equals( itemChild.getChildId() ) ) {
+				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+			}
+		}
+		
+		itemChild.setTodoItem( itemParent );
+		itemChild.setParentId( parentId );
+		TodoItemChild savedItem = todoService.saveTodoItemChild( itemChild );
+		CommonResponse commonResponse = CommonResponse.builder()
+				  .code( CommonConstant.Common.SUCCESS_CODE )
+				  .message( CommonConstant.Common.SUCCESS_MESSAGE )
+				  .data( savedItem )
+				  .build();
+		
+		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		return ResponseEntity.ok( commonResponse );
+	}
+	
 	
 	/*
 	 * Get Todo List With Pagination

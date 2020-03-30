@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,7 +20,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table( name = "todo_child" )
+@Table( name = "todo_child",
+		uniqueConstraints = { // UNIQUE 설정: child_id, parent_id
+		@UniqueConstraint(
+				columnNames = { "child_id", "parent_id" }
+	)
+} )
 public class TodoItemChild {
 
 	@Id
