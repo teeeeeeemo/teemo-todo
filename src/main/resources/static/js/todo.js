@@ -108,6 +108,52 @@ function handleTodoPagination( pageNum ) {
 	});
 }
 
+/* Check isCompletable and Update Done State */
+function checkAndUpdateDoneState( ele ) {
+	var itemId = $( ele ).attr( "id" );
+	var isCompletable;
+	var requestUrl = baseUrl + "/completable/" + itemId;
+	$.ajax({
+		type: "GET",
+		url: requestUrl,
+		async: false,
+		success: function ( res ) {
+			isCompletable = res.data.isCompletable;
+		},
+		error: function ( res ) { }
+	});
+	
+	if ( isCompletable ) {
+		updateDoneState( itemId );
+	} else {
+		alert( '완료되지 않은 참조 Todo가 있습니다.' );
+	}
+}
+
+/* Update Done State */
+function updateDoneState( itemId ) {
+	var requestUrl = baseUrl + "/state/" + itemId;
+	$.ajax({
+		type: "PUT",
+		url: requestUrl,
+		async: false,
+		success: function ( res ) {
+			reloadTodoList();
+//			var newItem = $( '<li/>' )
+//				.attr( "id", "item" + res.data.itemId );
+//			
+//			var todoRow = createTodoRow( res.data );
+//			
+//			var oldItem = $("#item" + itemId );
+//			oldItem.replaceWith( newItem );
+		},
+		error: function ( res ) { }
+	});
+	
+//	reloadTodoList();
+}
+
+
 
 /* Create Todo Row */
 function createTodoRow( todoObj ) {
@@ -123,6 +169,18 @@ function createTodoRow( todoObj ) {
 	if ( todoObj.isDone ) {
 		li.addClass( 'completed' );
 	}
+	
+	// Check Box
+	var checkBoxAttr = $( '<a/>' )
+		.attr( "id", todoObj.itemId )
+		.attr( "onclick", "checkAndUpdateDoneState( this )" )
+		.addClass( 'todo-completed' )
+		.appendTo( todoRow );
+	var checkBoxIcon = $( '<i/>' )
+		.addClass( 'material-icons toggle-completed-checkbox' )
+		.addClass( 'editable' )
+		.appendTo( checkBoxAttr );
+	
 	
 	// Task Name
 	var todoTitle = $( '<span/>' )

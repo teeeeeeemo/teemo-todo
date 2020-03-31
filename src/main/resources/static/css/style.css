@@ -20,6 +20,11 @@ body {
 	color: #333;
 }
 
+i {
+	vertical-align: middle;
+	color: #626262;
+}
+
 input {
 	border: 1px solid #E8E8E8
 }
@@ -68,6 +73,11 @@ input {
 	border-bottom: 1px solid #E8E8E8;
 }
 
+.todo-content ul li span {
+	display: inline-block;
+	vertical-align: middle;
+}
+
 .todo-content .todo-title {
 	width: calc(50%-130px);
 	margin-left: 10px;
@@ -75,10 +85,34 @@ input {
 	text-overflow: ellipsis;
 }
 
+.todo-content .todo-complteted {
+	display: inline-block;
+	text-align: center;
+	width: 35px;
+	height: 35px;
+}
+
+.todo-content .todo-completed i {
+	font-size: 20px;
+}
+
+/* editable */
+.editable {
+	cursor: pointer;
+}
+
 /* completed */
 li.completed .todo-title {
 	text-decoration: line-through;
 	color: #757575;
+}
+
+.toggle-completed-checkbox:before {
+	content: 'check_box_outline_blank';
+}
+
+li.completed .toggle-completed-checkbox:before {
+	content: 'check_box';
 }
 
 /* pagination */
