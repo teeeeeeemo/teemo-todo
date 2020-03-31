@@ -4,13 +4,25 @@
 <meta charset="UTF-8">
 <title>Teemo Todo App</title>
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/todo.js}"></script>
+
+<!--For jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 </head>
 
-
-
 <body>
-	<h1 class="page-title">Teemo Todo</h1>
+	<div class="todo-content">
+		<h1 class="page-title">Teemo Todo</h1>
+	
+		<div class="todo-create">
+			<form action="#">
+				<input type="text" id="taskNameTextField" class="form-control" onkeypress="handleEnterKey(event)" placeholder="Input task name then tap Enter to add">
+			</form>
+		</div>
+		
+		<ul class="todo-list"></ul>
+	</div>
 </body>
 
 </html>

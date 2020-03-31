@@ -1,7 +1,95 @@
 h1 {
-	color: #000000;
+	color: #333;
+}
+
+/* 
+ * box-sizing: border-box: width와 height 속성이 padding과 border를 포함.
+ * 선언한 width 값에 padding을 주더라도 자동으로 실제 컨텐츠 부분의 width가 줄어들면서 padding이 안쪽으로 파고 들게 되어, 
+ * 실제 웹에서 보여지는 width 값이 선언값 그대로 유지.
+ */
+* {
+	-webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+body {
+	font-size: 18px;
+	line-height: 1.58;
+	background: #E6E6E6;
+	color: #333;
+}
+
+input {
+	border: 1px solid #E8E8E8
 }
 
 .page-title {
 	text-align: center;
+}
+
+/* todo-content: 24 */
+
+.todo-content {
+	max-width: 1000px;
+	width: 100%;
+	margin: 0 auto;
+	margin-top: 60px;
+	background-color: #FFF;
+	padding: 15px;
+	box-shadow: 0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
+}
+
+.todo-content .todo-create {
+	padding-bottom: 30px;
+	border-bottom: 1px solid #E8E8E8;
+}
+
+.todo-content .form-control {
+	width: 100%;
+	height: 50px;
+}
+
+.todo-content ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	max-height: 450px;
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-left: -15px;
+	margin-right: -15px;
+	overflow-y: scroll;
+}
+
+.todo-content ul li {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #E8E8E8;
+}
+
+.todo-content .todo-title {
+	width: calc(50%-130px);
+	margin-left: 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* completed */
+li.completed .todo-title {
+	text-decoration: line-through;
+	color: #757575;
+}
+
+/* form-control */
+
+.form-control {
+	font-size: 16px;
+	padding-left: 15px;
+	outline: none;
+	border: 1px solid #E8E8E8;
+}
+
+.form-control:focus {
+	border: 1px solid #626262;
 }
