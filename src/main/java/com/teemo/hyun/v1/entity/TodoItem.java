@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -43,9 +42,6 @@ public class TodoItem {
 	
 	@Column( name = "is_done" )
 	private Boolean isDone = false;
-	
-	@Transient
-	private Boolean isCompletable;
 	
 	@Column( name = "created_at" )
 	@CreationTimestamp

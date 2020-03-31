@@ -89,7 +89,8 @@ public class TodoService {
 		return todoItemList;
 	}
 	
-	/* Todo List 조회 
+	/* 
+	 * Todo List 조회 
 	 *  - Pagination 
 	 *  - Between FromDate & ToDate
 	 */
@@ -98,7 +99,8 @@ public class TodoService {
 		return todoItemRepository.findAllByCreatedAtBetween( PageRequest.of( pageNum - 1, PAGE_POST_COUNT, Sort.by( Sort.Direction.DESC, "createdAt" ) ), fromDate, toDate );
 	}
 	
-	/* Todo List 조회 
+	/* 
+	 * Todo List 조회 
 	 *  - Pagination 
 	 *  - By isDone
 	 */
@@ -112,6 +114,44 @@ public class TodoService {
 			todoItemList.add( todoItem );
 		}
 		return todoItemList;
+	}
+	
+	/*
+	 * Todo List 조회 For Add 
+	 */
+	public List< TodoItem > getTodoListForAdd( Long parentId ) {
+		//
+		
+		List< Long > excludeIdList = new ArrayList<>();
+		TodoItem parentItem = getTodoItemOne( parentId );
+		if ( parentItem != null ) {
+			excludeIdList.add( parentItem.getItemId() );
+			
+			if ( !parentItem.getTodoChildList().isEmpty() ) {
+				for ( int i=0; i<parentItem.getTodoChildList().size(); i++ ) {
+					excludeIdList.add( parentItem.getTodoChildList().get( i ).getChildId() );
+				}
+			}
+		}
+		
+		return todoItemRepository.findListByItemIdNotIn( Sort.by( Sort.Direction.DESC, "createdAt" ), excludeIdList );
+	}
+	
+	/*
+	 * Todo List 조회 For Remove 
+	 */
+	public List< TodoItem > getTodoListForRemove( Long parentId ) {
+		//
+		
+		List< Long >includeIdList = new ArrayList<>();
+		TodoItem parentItem = getTodoItemOne( parentId );
+		if ( parentItem != null && !parentItem.getTodoChildList().isEmpty() ) {
+			for ( int i=0; i<parentItem.getTodoChildList().size(); i++ ) {
+				includeIdList.add( parentItem.getTodoChildList().get( i ).getChildId() );
+			}
+		}
+		
+		return todoItemRepository.findListByItemIdIn( Sort.by( Sort.Direction.DESC, "createdAt" ), includeIdList );
 	}
 	
 	/* Todo Item 조회 */
@@ -233,6 +273,21 @@ public class TodoService {
 		}
 		
 		return pageList;
+	}
+	
+	/* Todo Item의 완료 가능 여부 조회 */
+	public Boolean checkTodoItemIsCompletable( Long itemId ) {
+		//
+		TodoItem todoItem = getTodoItemOne( itemId );
+		List< TodoItemChild > todoItemChildList = todoItem.getTodoChildList();
+		
+		for( TodoItemChild itemChild: todoItemChildList ) {
+			if ( !getTodoItemOne( itemChild.getChildId() ).getIsDone() ) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	/* Count Todo Between FromDate, ToDate */

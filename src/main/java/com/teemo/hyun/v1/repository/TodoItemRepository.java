@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,11 +18,13 @@ public interface TodoItemRepository extends JpaRepository< TodoItem, Long > {
 	TodoItem findByItemId( Long itemId );
 	
 	/* Find All */
+	Page< TodoItem > findAllByTaskNameLike( Pageable pageable, String taskName );
+	List< TodoItem > findAllByCreatedAtBetween( Pageable pageable, Date fromDate, Date toDate ); // TODO 수정 
+	Page< TodoItem > findAllByIsDone( Pageable pageable, Boolean isDone );
 	
 	/* Find List */
-	Page< TodoItem > findAllByTaskNameLike( Pageable pageable, String taskName );
-	List< TodoItem > findAllByCreatedAtBetween( Pageable pageable, Date fromDate, Date toDate );
-	Page< TodoItem > findAllByIsDone( Pageable pageable, Boolean isDone );
+	List< TodoItem > findListByItemIdNotIn( Sort sort, List< Long > excludeIdList );
+	List< TodoItem > findListByItemIdIn( Sort sort, List< Long > includeIdList );
 	
 	/* Delete */
 	void deleteByItemId( Long itemId );

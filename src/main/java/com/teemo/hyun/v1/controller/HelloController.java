@@ -19,15 +19,15 @@ public class HelloController {
         private String message;
     }
 
-    @GetMapping(value = "/")
+    @GetMapping( value = "/test" )
     @ResponseBody
     public String helloworldString() {
-        log.debug("Helloworld");
-        log.info("Helloworld");
+        log.debug( "Helloworld" );
+        log.info( "Helloworld" );
         return HELLO;
     }
 
-    @GetMapping(value = "/helloworld/json")
+    @GetMapping( value = "/helloworld/json" )
     @ResponseBody
     public Hello helloworldJson() {
         Hello hello = new Hello();
@@ -35,15 +35,15 @@ public class HelloController {
         return hello;
     }
 
-    @GetMapping(value = "/helloworld/page")
+    @GetMapping( value = "/helloworld/page" )
     public String helloworld() {
         return "helloworld";
     }
 
-    @GetMapping("/helloworld/long-process")
+    @GetMapping( "/helloworld/long-process" )
     @ResponseBody
     public String pause() throws InterruptedException {
-        Thread.sleep(10000);
+        Thread.sleep( 10000 );
         return "Process finished";
     }
 }

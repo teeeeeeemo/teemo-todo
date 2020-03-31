@@ -117,7 +117,6 @@ public class TodoController {
 		return ResponseEntity.ok( commonResponse );
 	}
 	
-	
 	/*
 	 * Get Todo List With Pagination
 	 */
@@ -244,6 +243,40 @@ public class TodoController {
 		return ResponseEntity.ok( commonResponse );
 	}
 	
+	/* Get Todo List For Add Child */ 
+	@GetMapping( value = "/add-child/{parentId}")
+	public ResponseEntity< CommonResponse > getTodoListForAdd( @PathVariable Long parentId ) {
+		//
+		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		
+		List< TodoItem > todoListForAdd = todoService.getTodoListForAdd( parentId );
+		CommonResponse commonResponse = CommonResponse.builder()
+													  .code( CommonConstant.Common.SUCCESS_CODE )
+													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
+													  .data( todoListForAdd )
+													  .build();
+		
+		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		return ResponseEntity.ok( commonResponse );
+	}
+	
+	/* Get Todo List For Remove Child */ 
+	@GetMapping( value = "/remove-child/{parentId}")
+	public ResponseEntity< CommonResponse > getTodoListForRemove( @PathVariable Long parentId ) {
+		//
+		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		
+		List< TodoItem > todoListForRemove = todoService.getTodoListForRemove( parentId );
+		CommonResponse commonResponse = CommonResponse.builder()
+													  .code( CommonConstant.Common.SUCCESS_CODE )
+													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
+													  .data( todoListForRemove )
+													  .build();
+		
+		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		return ResponseEntity.ok( commonResponse );
+	}
+	
 	/* Get Todo Item One */
 	@GetMapping( value = "/{itemId}" )
 	public ResponseEntity< CommonResponse > getTodoItemOne( @PathVariable Long itemId ) {
@@ -336,6 +369,26 @@ public class TodoController {
 		}
 		
 		todoService.deleteTodoItemChild( parentId, itemChild.getChildId() );
+		
+		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		return ResponseEntity.ok( commonResponse );
+	}
+	
+	/* Get Todo Item isCompletable */
+	@GetMapping( value = "/completable/{parentId}" )
+	public ResponseEntity< CommonResponse > getTodoItemIsCompletable( @PathVariable Long parentId  ) {
+		//
+		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
+		
+		Map< String, Boolean > resultMap = new HashMap<>();
+		Boolean isCompletable = todoService.checkTodoItemIsCompletable( parentId );
+		resultMap.put( "isCompletable", isCompletable );
+
+		CommonResponse commonResponse = CommonResponse.builder()
+													  .code( CommonConstant.Common.SUCCESS_CODE )
+													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
+													  .data( resultMap )
+													  .build();
 		
 		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		return ResponseEntity.ok( commonResponse );

@@ -1,6 +1,7 @@
 server.port: 3333
 
 spring:
+
   h2:
     console:
       enabled: true
@@ -16,6 +17,12 @@ spring:
     showSql: false
     properties:
       hibernate.format_sql: true
+  
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html 
       
 
 # Logging
