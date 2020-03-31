@@ -60,7 +60,14 @@ public class TodoController {
 		return ResponseEntity.ok( commonResponse );
 	}
 	
-	/* Post Todo Item Child */
+	/* 
+	 * Post Todo Item Child 
+	 *	- 1. parentId와 childId 같지 않아야 함.
+	 *	- 2. 유효하지 않은 childId는 추가 불가.
+	 *	- 3. parentId: 1, childId: 2
+	 *		 parentId: 2, childId: 1 과 같은 케이스 불가.
+	 *	- 4. parent -> child는 Only 1depth ( * 1->2->3-> ... -> n -> 1 .... 는 불가. ) 
+	 */
 	@PostMapping( value = "/add-child/{parentId}" )
 	public ResponseEntity< CommonResponse > createTodoItemChild( @PathVariable Long parentId,
 																 @RequestBody TodoItemChild itemChild ) {
@@ -72,12 +79,29 @@ public class TodoController {
 		}
 		
 		TodoItem itemParent = todoService.getTodoItemOne( parentId );
+		TodoItem child = todoService.getTodoItemOne( itemChild.getChildId() ); // ChildId 유효성 체크
+		
+		
+		if( todoService.getTodoItemChildByChildId( parentId ) != null ) {
+			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+		}
+		
+		if( todoService.getTodoItemChildByParentId( itemChild.getChildId() ) != null ) {
+			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+		}
+		
+		List< TodoItemChild > childList = child.getTodoChildList();
+		for ( TodoItemChild todoItemChild: childList ) {
+			if ( todoItemChild.getChildId().equals( parentId ) ) {
+				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+			} 
+		}
 
-		List< TodoItemChild > childList = itemParent.getTodoChildList();
-		for( TodoItemChild todoItemChild: childList ) {
+		childList = itemParent.getTodoChildList();
+		for ( TodoItemChild todoItemChild: childList ) {
 			if ( todoItemChild.getChildId().equals( itemChild.getChildId() ) ) {
 				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
-			}
+			} 
 		}
 		
 		itemChild.setTodoItem( itemParent );

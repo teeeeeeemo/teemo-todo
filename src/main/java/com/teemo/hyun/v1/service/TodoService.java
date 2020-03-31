@@ -117,11 +117,23 @@ public class TodoService {
 	/* Todo Item 조회 */
 	public TodoItem getTodoItemOne( Long itemId ) {
 		//
-		TodoItem item = todoItemRepository.findByItemId( itemId );
+		TodoItem item = todoItemRepository.findById( itemId ).orElse( null );
 		if ( item == null ) {
 			throw new CNotFoundException( CommonConstant.Todo.NOT_FOUND );
 		}
 		return item;
+	}
+	
+	/* Todo Item 조회 By childId */
+	public TodoItemChild getTodoItemChildByChildId( Long childId ) {
+		//
+		return todoItemChildRepository.findByChildId( childId );
+	}
+	
+	/* Todo Item 조회 By parentId */
+	public TodoItemChild getTodoItemChildByParentId( Long parentId ) {
+		//
+		return todoItemChildRepository.findByChildId( parentId );
 	}
 	
 	/* Todo Item 수정 */

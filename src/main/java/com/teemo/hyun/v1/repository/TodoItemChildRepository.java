@@ -10,6 +10,8 @@ public interface TodoItemChildRepository extends JpaRepository< TodoItemChild, L
 
 	/* Find One */
 	TodoItemChild findByParentIdAndChildId( Long parentId, Long childId );
+	TodoItemChild findByChildId( Long childId );
+	TodoItemChild findByParentId( Long parentId );
 	
 	/* Delete */
 	void deleteByChildId( Long childId );
