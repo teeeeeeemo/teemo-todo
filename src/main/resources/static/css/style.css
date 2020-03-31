@@ -81,6 +81,29 @@ li.completed .todo-title {
 	color: #757575;
 }
 
+/* pagination */
+.pagination {
+	padding-top: 11px;
+	display: block;
+	text-align: center;
+}
+
+.pagination a {
+	color: #485A74;
+	float: none;
+	padding: 8px 16px;
+	text-decoration: none;
+}
+
+.pagination a.active {
+	background-color: #4CAF50;
+	color: white;
+}
+
+.pagination a:hover:not(.active) {
+	background-color: #ddd
+}
+
 /* form-control */
 
 .form-control {

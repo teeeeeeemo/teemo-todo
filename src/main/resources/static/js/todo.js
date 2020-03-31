@@ -1,5 +1,9 @@
 var baseUrl = "http://localhost:3333/v1/todos";
 
+$(document).ready( function() {
+	reloadTodoList();
+});
+
 /* Handle EnterKey: Create, Update TodoItem Name */
 function handleEnterKey(e) {
 	//
@@ -35,12 +39,12 @@ function postTodoItem( taskName ) {
 	var requestJSON = JSON.stringify( newTodoItem );
 	$.ajax({
 		type: "POST",
+		async: false,
 		url: requestUrl,
 		headers: {
 			"Content-Type": "application/json"
 		},
 		data: requestJSON,
-		async: false,
 		success: function ( res ) {
 			createTodoRow( res.data );
 		},
@@ -65,24 +69,45 @@ function reloadTodoList() {
 			var cList = $( 'ul.todo-list' );
 			cList.empty();
 			$.each( res.data.todoList, function( i, todoObj ) {
-//				if ( todoObj.isDone ) {
-//					li.addClass( 'completed' );
-//				}
 				createTodoRow( todoObj );
 			});
+			
 			var p = $( 'div.pagination' );
 			p.empty();
+			
 			$.each( res.data.pageList, function( i, pageList ) {
 				var p = $('div.pagination' )
 				var li = $( '<a id="pagination" href="#">' + pageList + '</a>' )
 					.attr( "pagenum", pageList )
-					.attr( "onclick", "handleTodoListPagination( $( this ).attr( 'pagenum' ) )" )
+					.attr( "onclick", "handleTodoPagination( $( this ).attr( 'pagenum' ) )" )
 					.appendTo( p );
 			});
 		},
 		error: function ( res ) { }
 	});
 }
+
+/* Pagination Todo List */
+function handleTodoPagination( pageNum ) {
+	//
+	var requestUrl = baseUrl + "/pagination?page=" + pageNum;
+	$.ajax({
+		type: "GET",
+		url: requestUrl,
+		headers: {
+			"Content-Type": "application/json"
+		},
+		success: function ( res ) {
+			var cList = $( 'ul.todo-list' );
+			cList.empty();
+			$.each( res.data.todoList, function( i, todoObj ) {
+				createTodoRow( todoObj );
+			});
+		},
+		error: function ( res ) { }
+	});
+}
+
 
 /* Create Todo Row */
 function createTodoRow( todoObj ) {

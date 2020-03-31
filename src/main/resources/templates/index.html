@@ -4,16 +4,18 @@
 <meta charset="UTF-8">
 <title>Teemo Todo App</title>
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
-<script th:src="@{/js/todo.js}"></script>
 
-<!--For jQuery -->
+<!-- For jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<!-- todo.js File -->
+<script th:src="@{/js/todo.js}"></script>
 
 </head>
 
 <body>
 	<div class="todo-content">
-		<h1 class="page-title">Teemo Todo</h1>
+		<h1 class="page-title">Teemo Todo Teemo</h1>
 	
 		<div class="todo-create">
 			<form action="#">
@@ -22,6 +24,8 @@
 		</div>
 		
 		<ul class="todo-list"></ul>
+		
+		<div class="pagination"></div>
 	</div>
 </body>
 
