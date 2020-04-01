@@ -22,7 +22,7 @@ body {
 
 i {
 	vertical-align: middle;
-	color: #626262;
+	color: #353b62;
 }
 
 input {
@@ -31,6 +31,37 @@ input {
 
 .page-title {
 	text-align: center;
+}
+
+/* Select Box */
+select {
+	width: 13%;
+	padding: .5em .3em; /* 여백으로 높이 설정 */
+	border: 1px solid #E8E8E8;
+	font-family: inherit; 
+	background: url(/image/icons8-expand-arrow-26.png) no-repeat 95% 50%; /* 커스텀 이미지로 대체 */
+	border-radius: 0px;
+	-webkit-appearance: none; /* Safari & Chrome */
+	-moz-appearance: none; /* Firefox */
+	appearance: none;
+	cursor: pointer;
+	outline: none;
+	padding-left: 11px;
+	font-weight: bold;
+}
+
+.select-button {
+	height: 25px;
+	outline: none;
+	cursor: pointer;
+}
+
+
+/* tooltip */
+.ui-tooltip-content {
+	font-size: 10pt;
+	font-family: Calibri;
+	color: #B25C66;
 }
 
 /* todo-content: 24 */
@@ -79,11 +110,17 @@ input {
 }
 
 .todo-content .todo-title {
-	width: calc(50%-130px);
+	width: calc(50% - 130px);
 	margin-left: 10px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+/* .todo-content .todo-info span {
+	margin-left: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+} */
 
 .todo-content .todo-complteted {
 	display: inline-block;
@@ -94,6 +131,46 @@ input {
 
 .todo-content .todo-completed i {
 	font-size: 20px;
+}
+
+.todo-content .todo-actions{
+	float: right;
+}
+
+.todo-content .todo-actions i{
+	font-size: 17px;
+}
+
+.todo-content .todo-actions a {
+	display: inline-block;
+	text-align: center;
+	width: 35px;
+	height: 35px;
+	cursor: pointer;
+}
+
+.todo-content .todo-search {
+	padding-bottom: 15px;
+	border-bottom: 1px solid #E8E8E8;
+	width: 100%;
+}
+
+
+/*****/
+.todo-content .input-search {
+	display: inline-block;
+	width: 20%;
+	height: 26px;
+	font-size: 12px;
+	padding-left: 10px;
+	position: relative;
+	top: 1px;
+	outline: none;
+	border: 1px solid #E8E8E8;
+}
+
+.input-search:focus {
+	border: 1px solid #626262;
 }
 
 /* editable */
@@ -130,7 +207,7 @@ li.completed .toggle-completed-checkbox:before {
 }
 
 .pagination a.active {
-	background-color: #4CAF50;
+	background-color: #7e837f;
 	color: white;
 }
 

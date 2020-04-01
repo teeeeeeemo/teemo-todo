@@ -11,6 +11,11 @@
 <!-- For material icons -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
+<!-- For Tooltip -->
+<link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
 <!-- todo.js File -->
 <script th:src="@{/js/todo.js}"></script>
 
@@ -19,6 +24,20 @@
 <body>
 	<div class="todo-content">
 		<h1 class="page-title">Teemo Todo Teemo</h1>
+		
+		<div class="todo-search">
+			<select id="search-option" name="search-option">
+				<option value="option">    Option	</option>
+				<option value="doing">	   Doing	</option>
+				<option value="done">	   Done		</option>
+				<option value="date">	   Date		</option>
+				<option value="task_name"> TaskName </option>
+			</select>
+			<input type="text" id="input_task_name" placeholder="Input task name to search" class="input-search"/>
+			<input type="text" id="datepicker_from" placeholder="From" 						class="input-search"/>
+			<input type="text" id="datepicker_to"   placeholder="To" 						class="input-search"/>
+			<input type="button" value="Search" class="select-button" onclick="doSearch();">
+		</div>
 	
 		<div class="todo-create">
 			<form action="#">

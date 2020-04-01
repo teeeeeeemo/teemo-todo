@@ -28,7 +28,7 @@ public class TodoService {
 	@Autowired
 	private TodoItemChildRepository todoItemChildRepository;
 	
-	private static final int BLOCK_PAGE_NUM_COUNT = 10;
+	private static final int BLOCK_PAGE_NUM_COUNT = 8;
 	private static final int PAGE_POST_COUNT = 8; // 8 item per 1 page 
 	
 	/* Todo Item 추가 */
