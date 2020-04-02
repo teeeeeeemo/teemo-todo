@@ -200,12 +200,24 @@ public class TodoService {
 		return todoItemRepository.save( item );
 	}
 	
-	/* Todo Item State 수정 */
+	/* Todo Item State 변경 - DB값 변경 */
 	public TodoItem updateTodoItemState( Long itemId ) {
 		//
 		TodoItem item = todoItemRepository.findById( itemId ).orElse( null );
 		if ( item != null ) {
 			item.setIsDone( !item.getIsDone() );
+			todoItemRepository.save( item );
+			return item;
+		}
+		return null;
+	}
+	
+	/* Todo Item State 수정 - 클라이언트 세팅 */
+	public TodoItem updateTodoItemStateByClient( Long itemId, Boolean isDone ) {
+		//
+		TodoItem item = todoItemRepository.findById( itemId ).orElse( null );
+		if ( item != null ) {
+			item.setIsDone( isDone );
 			todoItemRepository.save( item );
 			return item;
 		}
@@ -220,7 +232,7 @@ public class TodoService {
 		if ( item == null ) {
 			throw new CNotFoundException( CommonConstant.Todo.NOT_FOUND );
 		}
-		
+		todoItemChildRepository.deleteByChildId( itemId );
 		todoItemRepository.delete( item );
 	}
 	
@@ -287,18 +299,19 @@ public class TodoService {
 	}
 	
 	/* Todo Item의 완료 가능 여부 조회 */
-	public Boolean checkTodoItemIsCompletable( Long itemId ) {
+	public TodoItem checkTodoItemIsCompletable( Long itemId ) {
 		//
 		TodoItem todoItem = getTodoItemOne( itemId );
 		List< TodoItemChild > todoItemChildList = todoItem.getTodoChildList();
 		
 		for( TodoItemChild itemChild: todoItemChildList ) {
 			if ( !getTodoItemOne( itemChild.getChildId() ).getIsDone() ) {
-				return false;
+				todoItem.setIsCompletable( false );
+			} else {
+				todoItem.setIsCompletable( true );
 			}
 		}
-		
-		return true;
+		return todoItem;
 	}
 	
 	/* Todo Child 추가 가능 여부 조회 */

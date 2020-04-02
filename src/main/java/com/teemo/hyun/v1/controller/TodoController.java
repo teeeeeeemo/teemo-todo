@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ public class TodoController {
 			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST );
 		}
 		
+		item.setIsDone( false );
 		TodoItem savedItem = todoService.saveTodoItem( item );
 		CommonResponse commonResponse = CommonResponse.builder()
 													  .code( CommonConstant.Common.SUCCESS_CODE )
@@ -296,16 +298,21 @@ public class TodoController {
 	
 	/* Update Todo Item State */
 	@PutMapping( value = "/state/{itemId}" )
-	public ResponseEntity< CommonResponse > updateTodoItemState( @PathVariable Long itemId ) {
+	public ResponseEntity< CommonResponse > updateTodoItemState( @PathVariable Long itemId, @RequestBody( required = false ) TodoItem todoItem ) {
 		//
 		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 
-		TodoItem updatedItem = todoService.updateTodoItemState( itemId );
 		CommonResponse commonResponse = CommonResponse.builder()
 													  .code( CommonConstant.Common.SUCCESS_CODE )
 													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
-													  .data( updatedItem )
 													  .build();
+		TodoItem updatedItem = null;
+		if( todoItem != null && todoItem.getIsDone() != null ) {
+			updatedItem = todoService.updateTodoItemStateByClient( itemId, todoItem.getIsDone() );
+		} else {
+			updatedItem = todoService.updateTodoItemState( itemId );
+		}
+		commonResponse.setData( updatedItem );
 		
 		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		return ResponseEntity.ok( commonResponse );
@@ -359,14 +366,12 @@ public class TodoController {
 		//
 		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		
-		Map< String, Boolean > resultMap = new HashMap<>();
-		Boolean isCompletable = todoService.checkTodoItemIsCompletable( parentId );
-		resultMap.put( "isCompletable", isCompletable );
+		TodoItem todoItem = todoService.checkTodoItemIsCompletable( parentId );
 
 		CommonResponse commonResponse = CommonResponse.builder()
 													  .code( CommonConstant.Common.SUCCESS_CODE )
 													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
-													  .data( resultMap )
+													  .data( todoItem )
 													  .build();
 		
 		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );

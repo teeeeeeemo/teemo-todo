@@ -12,10 +12,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,7 +45,7 @@ public class TodoItem {
 	private String taskName;
 	
 	@Column( name = "is_done" )
-	private Boolean isDone = false;
+	private Boolean isDone;
 	
 	@Column( name = "created_at" )
 	@CreationTimestamp
@@ -50,6 +54,10 @@ public class TodoItem {
 	@Column( name = "updated_at" )
 	@UpdateTimestamp
 	private Date updatedAt = new Date();
+	
+	@JsonInclude( Include.NON_NULL )
+	@Transient
+	private Boolean isCompletable;
 	
 
 }

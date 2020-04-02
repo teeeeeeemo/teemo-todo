@@ -1,4 +1,4 @@
-var baseUrl = "http://localhost:3333/v1/todos";
+var baseUrl = "http://teeeeemo.iptime.org:3333/v1/todos";
 
 $(document).ready( function() {
 	//
@@ -243,7 +243,7 @@ function getTodoListForRemove( ele ) {
                     var cList = $( 'ul.task-list' );
                     cList.empty();
                     $.each( res.data, function( i, todoObj ) {
-                        createTaskRowForAdd( todoObj, parentTodo );
+                        createTaskRowForRemove( todoObj, parentTodo );
                     });
 				},
 				error: function ( res ) { }
@@ -251,76 +251,6 @@ function getTodoListForRemove( ele ) {
 			
 		}
 	}
-}
-
-/* Create Todo Children */
-function createTodoChildren(childId, parentId) {
-	var isAdded;
-    var childItem = {
-            parentId: parentId,
-            childId: childId
-        };
-    var requestJSON = JSON.stringify(childItem);
-    $.ajax({
-    	data: requestJSON,
-    	headers: {
-            "Content-Type": "application/json"
-        },
-        type: "PUT",
-        url: "http://localhost:3030/v1/todo/add-child/" + parentId,
-        async: false,
-        success: function (data) {
-        	isAdded = true;
-        	console.log( "RESPONSE_DATA:" + data.isDone );
-        	var oldItem = $("#child-item" + childId);
-            cuteHide(oldItem);
-            oldItem.remove();
-        },
-        error: function (data) { }
-    });
-    
-    if ( isAdded ) {
-    	var itemId = parentId; // get the item id!
-        var requestJSON = JSON.stringify();
-        var isCompletable;
-        requestUrl = 
-        
-        /* 참조하고 있는 모든 자식 Todo Item들의 완료 여부 확인 */
-        $.ajax({
-            type: "GET",
-            url: "http://localhost:3030/v1/todo/item/completable/" + itemId,
-            async: false,
-            success: function (data) {
-            	isCompletable = data.isCompletable;
-            },
-            error: function (data) { }
-        });
-    	
-        if ( isCompletable ) {
-        	$.ajax({
-                type: "PUT",
-                url: "http://localhost:3030/v1/todo/state/" + parentId,
-                async: false,
-                success: function (data) {
-                	// Create new list item                        
-                    var newListItem = $('<li/>')
-                        .attr("id", "item" + data.parentId);
-                    
-                    if (data.isDone) {
-                        newListItem.addClass('completed')
-                    }
-                    var todoRow = createTodoRow(newListItem, data);
-                    
-                    // Replace the old one by the new one
-                    var oldListItem = $("#item" + parentId);
-                    oldListItem.replaceWith(newListItem);
-                },
-                error: function (data) { }
-            });
-        }
-    }
-    
-    reloadTodoList();
 }
 
 /* PUT Todo Item */
@@ -515,8 +445,8 @@ function checkAndUpdateDoneState( ele ) {
 		},
 		error: function ( res ) { }
 	});
-	
-	if ( isCompletable ) {
+	console.log( "TTTT: " + isCompletable );
+	if ( isCompletable || isCompletable == undefined ) {
 		updateDoneState( itemId );
 	} else {
 		alert( '완료되지 않은 참조 Todo가 있습니다.' );
@@ -564,14 +494,40 @@ function editTodoItem( ele ) {
 	$( "#taskNameTextField" ).attr( "editingItemId", itemId );
 }
 
-/* Create Todo Child */
-function createTodoChild( childId, parentId ) {
-	var changeIsDone;
+/* Delete Todo Child */
+function deleteTodoChild( childId, parentId ) {
     var childItem = {
     		childId: childId
     };
     var requestJSON = JSON.stringify(childItem);
-    var requestUrl = baseUrl + "/" + parentId;
+    var requestUrl = baseUrl + "/remove-child/" + parentId;
+    $.ajax({
+    	data: requestJSON,
+    	headers: {
+            "Content-Type": "application/json"
+        },
+        type: "DELETE",
+        url: requestUrl,
+        async: false,
+        success: function ( res ) {
+        	var oldItem = $("#child-item" + childId);
+            cuteHide(oldItem);
+            oldItem.remove();
+        },
+        error: function (data) { }
+    });
+    
+    reloadTodoList();
+}
+
+/* Create Todo Child */
+function createTodoChild( childId, parentId ) {
+	var isAdded;
+    var childItem = {
+    		childId: childId
+    };
+    var requestJSON = JSON.stringify(childItem);
+    var requestUrl = baseUrl + "/add-child/" + parentId;
     $.ajax({
     	data: requestJSON,
     	headers: {
@@ -584,32 +540,41 @@ function createTodoChild( childId, parentId ) {
         	var oldItem = $("#child-item" + res.data.childId);
             cuteHide(oldItem);
             oldItem.remove();
-            changeIsDone = data.isDone;
+//            changeIsDone = data.isDone;
+        	isAdded = true;
         },
         error: function (data) { }
     });
     
-    console.log("!!!changeIsDone: " + changeIsDone);
-    if( changeIsDone ) {
+    if( isAdded ) {
     	var itemId = parentId; // get the item id!
         var requestJSON = JSON.stringify();
         var isCompletable;
-        
+        var doneState;
+        requestUrl = baseUrl + "/completable/" + parentId;
         /* 참조하고 있는 모든 자식 Todo Item들의 완료 여부 확인 */
         $.ajax({
             type: "GET",
-            url: "http://localhost:3030/v1/todo/item/completable/" + itemId,
+            url: requestUrl,
             async: false,
-            success: function (data) {
-            	isCompletable = data.isCompletable;
+            success: function ( res ) {
+            	isCompletable = res.data.isCompletable;
+            	doneState = res.data.isDone;
             },
             error: function (data) { }
         });
-    	
-        if ( isCompletable ) {
+    	console.log( "AAA: " + isCompletable );
+    	console.log( "BBB: " + doneState );
+        if ( !isCompletable && doneState ) {
+        	console.log( "HERE" );
+        	requestUrl = baseUrl + "/state/" + parentId;
+        	var todoItem = {
+            		isDone: false
+            };
+            var requestJSON = JSON.stringify( todoItem );
         	$.ajax({
                 type: "PUT",
-                url: "http://localhost:3030/v1/todo/state/" + parentId,
+                url: requestUrl,
                 async: false,
                 success: function (data) {
                 	// Create new list item                        
@@ -683,7 +648,7 @@ function createTaskRowForRemove( todoObj, parentTodo ) {
     // Add Icon
     var addAttr = $('<a/>')
         .attr( "id", todoObj.itemId ) // to know item id!
-        .attr( "onclick", "createTodoChildren" + "(" + todoObj.itemId + "," + parentTodo + ")" )
+        .attr( "onclick", "deleteTodoChild" + "(" + todoObj.itemId + "," + parentTodo + ")" )
         .addClass(' todo-added' )
         .appendTo( todoRow );
 
@@ -826,4 +791,13 @@ function createTodoRow( todoObj ) {
 		.text( 'delete' )
 		.attr( "title", "DELETE" )
 		.appendTo( deleteAttr );
+}
+
+/* For animation Wheh Deleting */ 
+function cuteHide(el) {
+	el.animate({ opacity: '0' }, 300, function () {
+		el.animate({ height: '0px' }, 300, function () {
+			el.remove();
+		});
+	});
 }
