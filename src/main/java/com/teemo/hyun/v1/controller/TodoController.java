@@ -79,39 +79,18 @@ public class TodoController {
 		}
 		
 		TodoItem itemParent = todoService.getTodoItemOne( parentId );
-		TodoItem child = todoService.getTodoItemOne( itemChild.getChildId() ); // ChildId 유효성 체크
-		
-		
-		if( todoService.getTodoItemChildByChildId( parentId ) != null ) {
-			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
-		}
-		
-		if( todoService.getTodoItemChildByParentId( itemChild.getChildId() ) != null ) {
-			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
-		}
-		
-		List< TodoItemChild > childList = child.getTodoChildList();
-		for ( TodoItemChild todoItemChild: childList ) {
-			if ( todoItemChild.getChildId().equals( parentId ) ) {
-				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
-			} 
-		}
-
-		childList = itemParent.getTodoChildList();
-		for ( TodoItemChild todoItemChild: childList ) {
-			if ( todoItemChild.getChildId().equals( itemChild.getChildId() ) ) {
-				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
-			} 
-		}
-		
 		itemChild.setTodoItem( itemParent );
 		itemChild.setParentId( parentId );
-		TodoItemChild savedItem = todoService.saveTodoItemChild( itemChild );
+		
+		if( todoService.checkTodoChildIsAddable( parentId, itemChild.getChildId() ) ) {	
+			todoService.saveTodoItemChild( itemChild );
+		}
+
 		CommonResponse commonResponse = CommonResponse.builder()
-				  .code( CommonConstant.Common.SUCCESS_CODE )
-				  .message( CommonConstant.Common.SUCCESS_MESSAGE )
-				  .data( savedItem )
-				  .build();
+													  .code( CommonConstant.Common.SUCCESS_CODE )
+													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
+													  .data( itemChild )
+													  .build();
 		
 		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		return ResponseEntity.ok( commonResponse );

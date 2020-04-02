@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.teemo.hyun.v1.common.advice.exception.CBadRequestException;
 import com.teemo.hyun.v1.common.advice.exception.CNotFoundException;
 import com.teemo.hyun.v1.common.constant.CommonConstant;
 import com.teemo.hyun.v1.entity.TodoItem;
@@ -164,6 +165,16 @@ public class TodoService {
 		return item;
 	}
 	
+	/* Todo Item 조회 by itemId */
+	public TodoItem getTodoItemOneByItemId( Long itemId ) {
+		//
+		TodoItem item = todoItemRepository.findByItemId( itemId );
+		if ( item == null ) {
+			throw new CNotFoundException( CommonConstant.Todo.NOT_FOUND );
+		}
+		return item;
+	}
+	
 	/* Todo Item 조회 By childId */
 	public TodoItemChild getTodoItemChildByChildId( Long childId ) {
 		//
@@ -285,6 +296,37 @@ public class TodoService {
 			if ( !getTodoItemOne( itemChild.getChildId() ).getIsDone() ) {
 				return false;
 			}
+		}
+		
+		return true;
+	}
+	
+	/* Todo Child 추가 가능 여부 조회 */
+	public Boolean checkTodoChildIsAddable( Long parentId, Long childId ) {
+		//
+		TodoItem child = getTodoItemOneByItemId( childId ); // ChildId 유효성 체크
+		TodoItem parent = getTodoItemOneByItemId( parentId );
+		
+		if( getTodoItemChildByChildId( parentId ) != null ) {
+			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+		}
+		
+		if( getTodoItemChildByParentId( childId ) != null ) {
+			throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+		}
+		
+		List< TodoItemChild > childList = child.getTodoChildList();
+		for ( TodoItemChild todoItemChild: childList ) {
+			if ( todoItemChild.getChildId().equals( parentId ) ) {
+				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+			} 
+		}
+
+		childList = parent.getTodoChildList();
+		for ( TodoItemChild todoItemChild: childList ) {
+			if ( todoItemChild.getChildId().equals( childId ) ) {
+				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_CHILD_ID );
+			} 
 		}
 		
 		return true;

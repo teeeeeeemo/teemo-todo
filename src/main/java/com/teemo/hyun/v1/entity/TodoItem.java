@@ -50,5 +50,6 @@ public class TodoItem {
 	@Column( name = "updated_at" )
 	@UpdateTimestamp
 	private Date updatedAt = new Date();
+	
 
 }
