@@ -205,6 +205,12 @@ public class TodoService {
 		//
 		TodoItem item = todoItemRepository.findById( itemId ).orElse( null );
 		if ( item != null ) {
+			
+			if ( item.getIsDone() && todoItemChildRepository.findByChildId( itemId ) != null ) {
+				item.setIsChild( true );
+				return item;
+			}
+			
 			item.setIsDone( !item.getIsDone() );
 			todoItemRepository.save( item );
 			return item;

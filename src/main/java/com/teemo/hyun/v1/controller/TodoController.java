@@ -229,12 +229,19 @@ public class TodoController {
 		//
 		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		
-		List< TodoItem > todoListForAdd = todoService.getTodoListForAdd( parentId );
 		CommonResponse commonResponse = CommonResponse.builder()
-													  .code( CommonConstant.Common.SUCCESS_CODE )
-													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
-													  .data( todoListForAdd )
-													  .build();
+				.code( CommonConstant.Common.SUCCESS_CODE )
+				.message( CommonConstant.Common.SUCCESS_MESSAGE )
+				.build();
+		if ( todoService.getTodoItemChildByChildId( parentId ) != null ) {
+			Map< String, Object > resultMap = new HashMap<>();
+			resultMap.put( "isChild", true );
+			commonResponse.setData( resultMap );
+			return ResponseEntity.ok( commonResponse );
+		}
+		
+		List< TodoItem > todoListForAdd = todoService.getTodoListForAdd( parentId );
+		commonResponse.setData( todoListForAdd );
 		
 		logger.debug( "#  END  # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		return ResponseEntity.ok( commonResponse );

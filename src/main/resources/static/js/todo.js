@@ -154,12 +154,10 @@ function handleEnterKey(e) {
 /* GET Todo List For Add */
 function getTodoListForAdd( ele ) {
 	//
-//	var modal = document.getElementById("todo-modal");
 	var modal = $( "#todo-modal" );
 	// Get the <span> element that closes the modal
 	var span = document.getElementsByClassName("close")[0];
 	// When the user clicks the button, open the modal 
-//	modal.style.display = "block";
 	modal.css( "display", "block" );
 	// When the user clicks on <span> (x), close the modal
 	span.onclick = function() {
@@ -188,11 +186,21 @@ function getTodoListForAdd( ele ) {
 				},
 				async: false,
 				success: function ( res ) {
-                    var cList = $( 'ul.task-list' );
-                    cList.empty();
-                    $.each( res.data, function( i, todoObj ) {
-                        createTaskRowForAdd( todoObj, parentTodo );
-                    });
+					
+					if ( res.data.isChild ) {
+						alert( 'Cannot be add - This is Child Todo' );
+						modal.css( "display", "none" );
+					} else if ( res.data.length == 0 ) {
+						alert( 'Cannot be add - No Child Todos to add' );
+						modal.css( "display", "none" );
+					} else {
+						var cList = $( 'ul.task-list' );
+						cList.empty();
+						$.each( res.data, function( i, todoObj ) {
+							createTaskRowForAdd( todoObj, parentTodo );
+						});
+					}
+					
 				},
 				error: function ( res ) { }
 			});
@@ -204,14 +212,13 @@ function getTodoListForAdd( ele ) {
 /* Get Todo List For Remove */
 function getTodoListForRemove( ele ) {
 	//
-	var modal = document.getElementById( "todo-modal" );
+	var modal = $( "#todo-modal" );
 	// Get the <span> element that closes the modal
 	var span = document.getElementsByClassName( "close" )[0];
-	// When the user clicks the button, open the modal 
-	modal.style.display = "block";
+	modal.css( "display", "block" )
 	// When the user clicks on <span> (x), close the modal
 	span.onclick = function() {
-	  modal.style.display = "none";
+		modal.css( "display", "none" );
 	}
 	
 	window.onclick = function( event ) {
@@ -236,11 +243,18 @@ function getTodoListForRemove( ele ) {
 				},
 				async: false,
 				success: function ( res ) {
-                    var cList = $( 'ul.task-list' );
-                    cList.empty();
-                    $.each( res.data, function( i, todoObj ) {
-                        createTaskRowForRemove( todoObj, parentTodo );
-                    });
+					
+					if ( res.data.length == 0 ) {
+						alert( 'No Added Reference Todo' );
+						modal.css( "display", "none" );
+					} else {
+						var cList = $( 'ul.task-list' );
+						cList.empty();
+						$.each( res.data, function( i, todoObj ) {
+							createTaskRowForRemove( todoObj, parentTodo );
+						});
+					}
+					
 				},
 				error: function ( res ) { }
 			});
@@ -444,7 +458,7 @@ function checkAndUpdateDoneState( ele ) {
 	if ( isCompletable || isCompletable == undefined ) {
 		updateDoneState( itemId );
 	} else {
-		alert( '완료되지 않은 참조 Todo가 있습니다.' );
+		alert( 'Some things have not been completed' );
 	}
 }
 
@@ -457,6 +471,9 @@ function updateDoneState( itemId ) {
 		url: requestUrl,
 		async: false,
 		success: function ( res ) {
+			if ( res.data.isChild && res.data.isDone ) {
+				alert( 'Cannot be changed - With Parents' )
+			}
 			var pageNum = $( 'div' ).children( '.active' ).text();
 			var searchOption = $( "#search-option" ).val();
 			var optionValue1 = '';
@@ -791,16 +808,13 @@ function createTodoRow( todoObj ) {
 	// Remove Child Icon
 	var removeAttr = $( '<a/>' )
 		.attr( "id", todoObj.itemId )
-//		.attr( "onclick", "getTodoListForRemove( this )" )
+		.attr( "onclick", "getTodoListForRemove( this )" )
 		.appendTo( todoActions );
 	var removeIcon = $( '<i/>' )
 		.addClass( 'material-icons' )
 		.text( 'remove' )
 		.attr( "title", "REMOVE-ReferenceTodo" )
 		.appendTo( removeAttr );
-	if( todoObj.todoChildList.length > 0 ) {
-		removeAttr.attr( "onclick", "getTodoListForRemove( this )" );
-    }
 	
 	// Edit Icon
 	var editAttr = $( '<a/>' )

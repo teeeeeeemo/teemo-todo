@@ -59,5 +59,9 @@ public class TodoItem {
 	@Transient
 	private Boolean isCompletable;
 	
+	@JsonInclude( Include.NON_NULL )
+	@Transient
+	private Boolean isChild;
+	
 
 }
