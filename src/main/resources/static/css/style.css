@@ -78,12 +78,12 @@ input {
 }
 
 /* Select Box */
-select {
+.search-select {
 	width: 13%;
 	padding: .5em .3em; /* 여백으로 높이 설정 */
 	border: 1px solid #E8E8E8;
 	font-family: inherit; 
-	background: url(/image/icons8-expand-arrow-26.png) no-repeat 95% 50%; /* 커스텀 이미지로 대체 */
+	background: url(/image/search-black-18dp.svg) no-repeat 95% 50%; /* 커스텀 이미지로 대체 */
 	border-radius: 0px;
 	-webkit-appearance: none; /* Safari & Chrome */
 	-moz-appearance: none; /* Firefox */
@@ -98,6 +98,27 @@ select {
 	height: 25px;
 	outline: none;
 	cursor: pointer;
+}
+
+/* Sort */
+.todo-sort {
+	padding-left: 200px;
+}
+
+.sort-select {
+	width: 13%;
+	padding: .5em .3em; /* 여백으로 높이 설정 */
+	border: 1px solid #E8E8E8;
+	font-family: inherit; 
+	background: url(/image/sort-24px.svg) no-repeat 95% 50%; /* 커스텀 이미지로 대체 */
+	border-radius: 0px;
+	-webkit-appearance: none; /* Safari & Chrome */
+	-moz-appearance: none; /* Firefox */
+	appearance: none;
+	cursor: pointer;
+	outline: none;
+	padding-left: 11px;
+	font-weight: bold;
 }
 
 /* tooltip */
@@ -258,8 +279,14 @@ select {
 
 /* Effect Pointer */
 .editable,
-.select-page {
+.select-page,
+.select-sort {
 	cursor: pointer;
+}
+
+a.active > i {
+	background-color: #7e837f;
+	color: white;
 }
 
 /* completed */

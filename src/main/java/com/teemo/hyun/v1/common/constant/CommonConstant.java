@@ -26,6 +26,7 @@ public class CommonConstant {
 		public static final String BAD_REQUEST_DATE 		  = "Bad Request Date";
 		public static final String BAD_REQUEST_CHILD_ID  	  = "Bad Request ChildId";
 		public static final String BAD_REQUEST_SORT_DIRECTION = "Bad Request SortDirection - ASC / DESC";
+		public static final String BAD_REQUEST_SORT_OPTION    = "Bad Request SortOption";
 				
 		/* Date Format */
 		public static final String DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";

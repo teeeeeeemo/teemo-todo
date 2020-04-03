@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,19 +62,10 @@ public class TodoService {
 	/* Todo List 조회 
 	 *  - Pagination 
 	 */
-	public List< TodoItem > getTodoListPagination( Integer pageNum, String sortDirection ) {
+	public List< TodoItem > getTodoListPagination( Integer pageNum, String sortDirection, String sortOption ) {
 		//
-		if ( StringUtils.isNoneEmpty( sortDirection ) ) {
-			if( ( !sortDirection.toUpperCase().equals( "ASC" ) ) && 
-				( !sortDirection.toUpperCase().equals( "DESC" ) ) ) {
-				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_SORT_DIRECTION );
-			}
-		} else {
-			sortDirection = "DESC"; // default sort direction: Decending
-		}
-		
 		Page< TodoItem > page = todoItemRepository.findAll( PageRequest.of( pageNum-1, PAGE_POST_COUNT, 
-																			Sort.by( Sort.Direction.fromString( sortDirection ), "createdAt" ) ) );
+																			Sort.by( Sort.Direction.fromString( sortDirection ), sortOption ) ) );
 		List< TodoItem > todoList = page.getContent();
 		List< TodoItem > todoItemList = new ArrayList<>();
 		
@@ -89,9 +79,10 @@ public class TodoService {
 	 *  - Pagination 
 	 *  - By TaskName
 	 */
-	public List< TodoItem > getTodoListPaginationByTaskName( Integer pageNum, String taskName ) {
+	public List< TodoItem > getTodoListPaginationByTaskName( Integer pageNum, String taskName, String sortDirection, String sortOption ) {
 		//
-		Page< TodoItem > page = todoItemRepository.findAllByTaskNameLike( PageRequest.of( pageNum-1, PAGE_POST_COUNT, Sort.by( Sort.Direction.DESC, "createdAt" ) ), taskName );
+		Page< TodoItem > page = todoItemRepository.findAllByTaskNameLike( PageRequest.of( pageNum-1, PAGE_POST_COUNT, 
+																						  Sort.by( Sort.Direction.fromString( sortDirection ), sortOption ) ), taskName );
 		List< TodoItem > todoList = page.getContent();
 		List< TodoItem > todoItemList = new ArrayList<>();
 		
@@ -106,9 +97,10 @@ public class TodoService {
 	 *  - Pagination 
 	 *  - Between FromDate & ToDate
 	 */
-	public List< TodoItem > getTodoListPaginationBetweenDate( Integer pageNum, Date fromDate, Date toDate ) {
+	public List< TodoItem > getTodoListPaginationBetweenDate( Integer pageNum, Date fromDate, Date toDate, String sortDirection, String sortOption ) {
 		//
-		return todoItemRepository.findAllByCreatedAtBetween( PageRequest.of( pageNum - 1, PAGE_POST_COUNT, Sort.by( Sort.Direction.DESC, "createdAt" ) ), fromDate, toDate );
+		return todoItemRepository.findAllByCreatedAtBetween( PageRequest.of( pageNum - 1, PAGE_POST_COUNT, 
+																			 Sort.by( Sort.Direction.fromString( sortDirection ), sortOption ) ), fromDate, toDate );
 	}
 	
 	/* 
@@ -116,9 +108,10 @@ public class TodoService {
 	 *  - Pagination 
 	 *  - By isDone
 	 */
-	public List< TodoItem > getTodoListPaginationByIsDone( Integer pageNum, Boolean isDone ) {
+	public List< TodoItem > getTodoListPaginationByIsDone( Integer pageNum, Boolean isDone, String sortDirection, String sortOption ) {
 		//
-		Page< TodoItem > page = todoItemRepository.findAllByIsDone( PageRequest.of( pageNum - 1, PAGE_POST_COUNT, Sort.by( Sort.Direction.DESC, "createdAt" ) ), isDone );
+		Page< TodoItem > page = todoItemRepository.findAllByIsDone( PageRequest.of( pageNum - 1, PAGE_POST_COUNT, 
+																					Sort.by( Sort.Direction.fromString( sortDirection ), sortOption ) ), isDone );
 		List< TodoItem > todoList = page.getContent();
 		List< TodoItem > todoItemList = new ArrayList<>();
 		
@@ -138,6 +131,11 @@ public class TodoService {
 		TodoItem parentItem = getTodoItemOne( parentId );
 		if ( parentItem != null ) {
 			excludeIdList.add( parentItem.getItemId() );
+			
+			List< TodoItemChild > allChild = todoItemChildRepository.findAll();
+			for( TodoItemChild child: allChild ) {
+				excludeIdList.add( child.getChildId() );
+			}
 			
 			if ( !parentItem.getTodoChildList().isEmpty() ) {
 				for ( int i=0; i<parentItem.getTodoChildList().size(); i++ ) {
@@ -350,6 +348,7 @@ public class TodoService {
 	public TodoItem checkTodoItemIsCompletable( Long itemId ) {
 		//
 		TodoItem todoItem = getTodoItemOne( itemId );
+		todoItem.setIsCompletable( null );
 		List< TodoItemChild > todoItemChildList = todoItem.getTodoChildList();
 		
 		for( TodoItemChild itemChild: todoItemChildList ) {

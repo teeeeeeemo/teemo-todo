@@ -69,7 +69,6 @@ public class TodoController {
 	 *	- 2. 유효하지 않은 childId는 추가 불가.
 	 *	- 3. parentId: 1, childId: 2
 	 *		 parentId: 2, childId: 1 과 같은 케이스 불가.
-	 *	- 4. parent -> child는 Only 1depth ( * 1->2->3-> ... -> n -> 1 .... 는 불가. ) 
 	 */
 	@PostMapping( value = "/add-child/{parentId}" )
 	public ResponseEntity< CommonResponse > createTodoItemChild( @PathVariable Long parentId,
@@ -117,6 +116,25 @@ public class TodoController {
 		Integer[] pageList = null;
 		List< Integer > pageListWithoutNulls = new ArrayList<Integer>();
 		
+		if ( StringUtils.isNoneBlank( sortDirection ) ) {
+			if( ( !sortDirection.toUpperCase().equals( "ASC" ) ) && 
+				( !sortDirection.toUpperCase().equals( "DESC" ) ) ) {
+				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_SORT_DIRECTION );
+			}
+		} else {
+			sortDirection = "DESC"; // default sort direction: Descending
+		}
+		
+		if ( !StringUtils.isBlank( sortOption ) ) {
+			if ( !sortOption.equals( "createdAt" ) && 
+				 !sortOption.equals( "updatedAt" ) && 
+				 !sortOption.equals( "taskName" ) ) {
+				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_SORT_OPTION );
+			}
+		} else {
+			sortOption = "createdAt"; // default sort option: "createdAt"
+		}
+		
 		CommonResponse commonResponse = CommonResponse.builder()
 													  .code( CommonConstant.Common.SUCCESS_CODE )
 													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
@@ -133,7 +151,7 @@ public class TodoController {
 						throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_TASK_NAME );
 					}
 					pageList = todoService.getTodoPageListByTaskName( pageNum, "%" + taskName + "%" );
-					List< TodoItem > todoListByTaskName = todoService.getTodoListPaginationByTaskName( pageNum, "%" + taskName + "%" );
+					List< TodoItem > todoListByTaskName = todoService.getTodoListPaginationByTaskName( pageNum, "%" + taskName + "%", sortDirection, sortOption );
 					
 					resultMap.put( "lastPage", todoService.getTodoLastPageTaskName( pageNum, "%" + taskName + "%" ) );
 					
@@ -175,7 +193,7 @@ public class TodoController {
 					}
 					
 					pageList = todoService.getTodoPageListBetweenDate( pageNum, parsedFromDate, parsedToDate );
-					List< TodoItem > todoListBetweenDate = todoService.getTodoListPaginationBetweenDate( pageNum, parsedFromDate, parsedToDate );
+					List< TodoItem > todoListBetweenDate = todoService.getTodoListPaginationBetweenDate( pageNum, parsedFromDate, parsedToDate, sortDirection, sortOption );
 					
 					for ( int i=0; i < pageList.length; i++) {
 				    	pageListWithoutNulls.add( pageList[ i ] );
@@ -191,7 +209,7 @@ public class TodoController {
 					
 				case "done":
 					pageList = todoService.getTodoPageListByIsDone( pageNum, true );
-					List< TodoItem > todoListByDone = todoService.getTodoListPaginationByIsDone( pageNum, true );
+					List< TodoItem > todoListByDone = todoService.getTodoListPaginationByIsDone( pageNum, true, sortDirection, sortOption );
 					
 					for ( int i=0; i < pageList.length; i++) {
 				    	pageListWithoutNulls.add( pageList[ i ] );
@@ -207,7 +225,7 @@ public class TodoController {
 					
 				case "doing":
 					pageList = todoService.getTodoPageListByIsDone( pageNum, false );
-					List< TodoItem > todoListByDoing = todoService.getTodoListPaginationByIsDone( pageNum, false );
+					List< TodoItem > todoListByDoing = todoService.getTodoListPaginationByIsDone( pageNum, false, sortDirection, sortOption );
 					
 					for ( int i=0; i < pageList.length; i++) {
 				    	pageListWithoutNulls.add( pageList[ i ] );
@@ -223,7 +241,7 @@ public class TodoController {
 			}
 		}
 		pageList = todoService.getTodoPageListTotal( pageNum );
-		List< TodoItem > todoList = todoService.getTodoListPagination( pageNum, sortDirection );
+		List< TodoItem > todoList = todoService.getTodoListPagination( pageNum, sortDirection, sortOption );
 		logger.debug( "######### Pages: " + Arrays.toString( pageList ) );
 		
 		resultMap.put( "lastPage", todoService.getTodoLastPageTotal( pageNum ) );
@@ -269,9 +287,9 @@ public class TodoController {
 		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 		
 		CommonResponse commonResponse = CommonResponse.builder()
-				.code( CommonConstant.Common.SUCCESS_CODE )
-				.message( CommonConstant.Common.SUCCESS_MESSAGE )
-				.build();
+													  .code( CommonConstant.Common.SUCCESS_CODE )
+													  .message( CommonConstant.Common.SUCCESS_MESSAGE )
+													  .build();
 		if ( todoService.getTodoItemChildByChildId( parentId ) != null ) {
 			Map< String, Object > resultMap = new HashMap<>();
 			resultMap.put( "isChild", true );
