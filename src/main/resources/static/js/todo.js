@@ -58,6 +58,9 @@ function initSearchOption() {
 function doSearch() {
 	//
 	var searchOption = $( "#search-option" ).val();
+	if ( searchOption == 'option' ) {
+		alert( 'Select Search Option' );
+	}
 	var pageNum = 1;
 	if( searchOption == 'task_name' ) {
 		if( $( "#input_task_name" ).val() == '' ) {
@@ -114,12 +117,39 @@ function getTodoListBySearchOption( pn, searchOption, optionValue1, optionValue2
 				if ( pageNum == null ) {
 					return;
 				}
-				var p = $( 'div.pagination' )
+				
+				var total = res.data.pageList.length;
+				var p = $( 'div.pagination' );
+				
+				if ( i == 0 ) {
+					var firstAttr = $( '<a/>' )
+					.attr( "onclick", "handleTodoPagination(" + 1 + ")" )
+					.addClass( 'select-page' )
+					.attr( "title", "FirstPage" )
+					.appendTo( p );
+					var firstIcon = $( '<i/>' )
+					.addClass( 'material-icons' )
+					.text( 'first_page' )
+					.appendTo( firstAttr );
+				}
+
 				var li = $( '<a id="pagnum' + pageNum + '" href="#">' + pageNum + '</a>' )
 					.attr( "onclick", "getTodoListBySearchOption( " + pageNum + ", '" + searchOption + "', '" + optionValue1 + "', '" + optionValue2 + "')" )
 					.appendTo( p );
 				if ( pageNum == pn ) {
 					li.addClass( 'active' );
+				}
+				
+				if ( i == total - 1 ) {
+					var lastAttr = $( '<a/>' )
+					.attr( "onclick", "handleTodoPagination(" + res.data.lastPage + ")" )
+					.addClass( 'select-page' )
+					.attr( "title", "LastPage" )
+					.appendTo( p );
+					var lastIcon = $( '<i/>' )
+					.addClass( 'material-icons' )
+					.text( 'last_page' )
+					.appendTo( lastAttr );
 				}
 			});
 		},
@@ -459,6 +489,7 @@ function handleTodoPagination( pageNum ) {
 					var firstAttr = $( '<a/>' )
 					.attr( "onclick", "handleTodoPagination(" + 1 + ")" )
 					.addClass( 'select-page' )
+					.attr( "title", "FirstPage" )
 					.appendTo( p );
 					var firstIcon = $( '<i/>' )
 					.addClass( 'material-icons' )
@@ -475,8 +506,9 @@ function handleTodoPagination( pageNum ) {
 				
 				if ( i == total - 1 ) {
 					var lastAttr = $( '<a/>' )
-					.attr( "onclick", "handleTodoPagination(" + 1 + ")" )
+					.attr( "onclick", "handleTodoPagination(" + res.data.lastPage + ")" )
 					.addClass( 'select-page' )
+					.attr( "title", "LastPage" )
 					.appendTo( p );
 					var lastIcon = $( '<i/>' )
 					.addClass( 'material-icons' )

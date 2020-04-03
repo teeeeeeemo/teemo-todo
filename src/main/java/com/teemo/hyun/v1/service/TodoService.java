@@ -253,6 +253,14 @@ public class TodoService {
 		todoItemChildRepository.delete( itemChild );
 	}
 	
+	/* Todo Last Page 조회: isDone */
+	public Integer getTodoLastPageIsDone( Integer curPageNum, Boolean isDone ) {
+		//
+		Double todoTotalCount = Double.valueOf( this.getTodoListCountByIsDone( isDone ) );
+		Integer totalLastPageNum = ( int ) ( Math.ceil( ( todoTotalCount / PAGE_POST_COUNT ) ) );
+		return totalLastPageNum;
+	}
+	
 	/* Todo Page List 조회: isDone */
 	public Integer[] getTodoPageListByIsDone( Integer curPageNum, Boolean isDone ) {
 		//
@@ -260,12 +268,27 @@ public class TodoService {
 		return this.getTodoPageList( curPageNum, todoTotalCount );
 	}
 	
+	/* Todo Last Page 조회: Between fromDate & toDate */
+	public Integer getTodoLastPageBetweenDate( Integer curPageNum, Date fromDate, Date toDate ) {
+		//
+		Double todoTotalCount = Double.valueOf( this.getTodoListCountByCreatedAtBetweenDate( fromDate, toDate ) );
+		Integer totalLastPageNum = ( int ) ( Math.ceil( ( todoTotalCount / PAGE_POST_COUNT ) ) );
+		return totalLastPageNum;
+	}
 	
 	/* Todo Page List 조회: Between fromDate & toDate */
 	public Integer[] getTodoPageListBetweenDate( Integer curPageNum, Date fromDate, Date toDate ) {
 		//
 		Double todoTotalCount = Double.valueOf( this.getTodoListCountByCreatedAtBetweenDate( fromDate, toDate ) );
 		return this.getTodoPageList( curPageNum, todoTotalCount );
+	}
+	
+	/* Todo Last Page 조회: TaskName */
+	public Integer getTodoLastPageTaskName( Integer curPageNum, String taskName ) {
+		//
+		Double todoTotalCount = Double.valueOf( this.getTodoListCountByTaskName( taskName ) );
+		Integer totalLastPageNum = ( int ) ( Math.ceil( ( todoTotalCount / PAGE_POST_COUNT ) ) );
+		return totalLastPageNum;
 	}
 	
 	/* Todo Page List 조회: taskName */
