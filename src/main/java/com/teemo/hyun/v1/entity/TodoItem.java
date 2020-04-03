@@ -63,5 +63,9 @@ public class TodoItem {
 	@Transient
 	private Boolean isChild;
 	
+	@JsonInclude( Include.NON_NULL )
+	@Transient
+	private Integer lastPage;
+	
 
 }

@@ -275,6 +275,14 @@ public class TodoService {
 		return this.getTodoPageList( curPageNum, todoTotalCount );
 	}
 	
+	/* Todo Last Page 조회: Total */
+	public Integer getTodoLastPageTotal( Integer curPageNum ) {
+		//
+		Double todoTotalCount = Double.valueOf( this.getTodoListCount() );
+		Integer totalLastPageNum = ( int ) ( Math.ceil( ( todoTotalCount / PAGE_POST_COUNT ) ) );
+		return totalLastPageNum;
+	}
+	
 	/* Todo Page List 조회: Total */
 	public Integer[] getTodoPageListTotal( Integer curPageNum ) {
 		//

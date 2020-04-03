@@ -256,8 +256,9 @@ select {
 	border: 1px solid #626262;
 }
 
-/* editable */
-.editable {
+/* Effect Pointer */
+.editable,
+.select-page {
 	cursor: pointer;
 }
 

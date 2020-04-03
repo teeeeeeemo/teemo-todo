@@ -2,11 +2,13 @@ package com.teemo.hyun.v1.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -111,6 +113,7 @@ public class TodoController {
 
 		Map< String, Object > resultMap = new HashMap<>();
 		Integer[] pageList = null;
+		List< Integer > pageListWithoutNulls = new ArrayList<Integer>();
 		
 		CommonResponse commonResponse = CommonResponse.builder()
 													  .code( CommonConstant.Common.SUCCESS_CODE )
@@ -130,7 +133,12 @@ public class TodoController {
 					pageList = todoService.getTodoPageListByTaskName( pageNum, "%" + taskName + "%" );
 					List< TodoItem > todoListByTaskName = todoService.getTodoListPaginationByTaskName( pageNum, "%" + taskName + "%" );
 					
-					resultMap.put( "pageList", pageList );
+				    for ( int i=0; i < pageList.length; i++) {
+				    	pageListWithoutNulls.add( pageList[ i ] );
+				    }
+				    pageListWithoutNulls.removeIf( Objects::isNull );
+					
+					resultMap.put( "pageList", pageListWithoutNulls );
 					resultMap.put( "todoList", todoListByTaskName );
 					commonResponse.setData( resultMap );
 					
@@ -165,7 +173,12 @@ public class TodoController {
 					pageList = todoService.getTodoPageListBetweenDate( pageNum, parsedFromDate, parsedToDate );
 					List< TodoItem > todoListBetweenDate = todoService.getTodoListPaginationBetweenDate( pageNum, parsedFromDate, parsedToDate );
 					
-					resultMap.put( "pageList", pageList );
+					for ( int i=0; i < pageList.length; i++) {
+				    	pageListWithoutNulls.add( pageList[ i ] );
+				    }
+				    pageListWithoutNulls.removeIf( Objects::isNull );
+					
+					resultMap.put( "pageList", pageListWithoutNulls );
 					resultMap.put( "todoList", todoListBetweenDate );
 					commonResponse.setData( resultMap );
 					
@@ -174,7 +187,13 @@ public class TodoController {
 				case "done":
 					pageList = todoService.getTodoPageListByIsDone( pageNum, true );
 					List< TodoItem > todoListByDone = todoService.getTodoListPaginationByIsDone( pageNum, true );
-					resultMap.put( "pageList", pageList );
+					
+					for ( int i=0; i < pageList.length; i++) {
+				    	pageListWithoutNulls.add( pageList[ i ] );
+				    }
+				    pageListWithoutNulls.removeIf( Objects::isNull );
+					
+					resultMap.put( "pageList", pageListWithoutNulls );
 					resultMap.put( "todoList", todoListByDone );
 					commonResponse.setData( resultMap );
 					
@@ -183,7 +202,13 @@ public class TodoController {
 				case "doing":
 					pageList = todoService.getTodoPageListByIsDone( pageNum, false );
 					List< TodoItem > todoListByDoing = todoService.getTodoListPaginationByIsDone( pageNum, false );
-					resultMap.put( "pageList", pageList );
+					
+					for ( int i=0; i < pageList.length; i++) {
+				    	pageListWithoutNulls.add( pageList[ i ] );
+				    }
+				    pageListWithoutNulls.removeIf( Objects::isNull );
+					
+					resultMap.put( "pageList", pageListWithoutNulls );
 					resultMap.put( "todoList", todoListByDoing );
 					commonResponse.setData( resultMap );
 					
@@ -194,7 +219,14 @@ public class TodoController {
 		List< TodoItem > todoList = todoService.getTodoListPagination( pageNum );
 		logger.debug( "######### Pages: " + Arrays.toString( pageList ) );
 		
-		resultMap.put( "pageList", pageList );
+		resultMap.put( "lastPage", todoService.getTodoLastPageTotal( pageNum ) );
+		
+	    for ( int i=0; i < pageList.length; i++) {
+	    	pageListWithoutNulls.add( pageList[ i ] );
+	    }
+	    pageListWithoutNulls.removeIf( Objects::isNull );
+		
+		resultMap.put( "pageList", pageListWithoutNulls );
 		resultMap.put( "todoList", todoList );
 		
 		commonResponse.setData( resultMap );

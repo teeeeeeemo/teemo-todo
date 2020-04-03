@@ -362,40 +362,65 @@ function postTodoItem( taskName ) {
 function reloadTodoList() {
 	//
 	initSearchOption();
+	handleTodoPagination( 1 );
 	
-	var requestUrl = baseUrl + "/pagination";
-	$.ajax({
-		type: "GET",
-		url: requestUrl,
-		async: false,
-		headers: {
-			"Content-Type": "application/json"
-		},
-		success: function ( res ) {
-			var cList = $( 'ul.todo-list' );
-			cList.empty();
-			$.each( res.data.todoList, function( i, todoObj ) {
-				createTodoRow( todoObj );
-			});
-			
-			var p = $( 'div.pagination' );
-			p.empty();
-			
-			$.each( res.data.pageList, function( i, pageNum ) {
-				if ( pageNum == null ) {
-					return;
-				}
-				var p = $( 'div.pagination' )
-				var li = $( '<a id="pagnum' + pageNum + '" href="#">' + pageNum + '</a>' )
-					.attr( "onclick", "handleTodoPagination(" + pageNum + ")" )
-					.appendTo( p );
-				if ( pageNum == 1 ) {
-					li.addClass( 'active' );
-				}
-			});
-		},
-		error: function ( res ) { }
-	});
+//	var requestUrl = baseUrl + "/pagination";
+//	$.ajax({
+//		type: "GET",
+//		url: requestUrl,
+//		async: false,
+//		headers: {
+//			"Content-Type": "application/json"
+//		},
+//		success: function ( res ) {
+//			var cList = $( 'ul.todo-list' );
+//			cList.empty();
+//			$.each( res.data.todoList, function( i, todoObj ) {
+//				createTodoRow( todoObj );
+//			});
+//			
+//			var p = $( 'div.pagination' );
+//			p.empty();
+//			
+//			
+//			$.each( res.data.pageList, function( i, pageNum ) {
+//				if ( pageNum == null ) {
+//					return;
+//				}
+//				
+//				var total = res.data.pageList.length;
+//				var p = $( 'div.pagination' );
+//				
+//				if ( i == 0 ) {
+//					var firstAttr = $( '<a/>' )
+//					.attr( "onclick", "handleTodoPagination(" + 1 + ")" )
+//					.appendTo( p );
+//					var firstIcon = $( '<i/>' )
+//					.addClass( 'material-icons' )
+//					.text( 'first_page' )
+//					.appendTo( firstAttr );
+//				}
+//				
+//				var li = $( '<a id="pagnum' + pageNum + '" href="#">' + pageNum + '</a>' )
+//					.attr( "onclick", "handleTodoPagination(" + pageNum + ")" )
+//					.appendTo( p );
+//				if ( pageNum == 1 ) {
+//					li.addClass( 'active' );
+//				}
+//				
+//				if ( i == total - 1 ) {
+//					var firstAttr = $( '<a/>' )
+//					.attr( "onclick", "handleTodoPagination(" + 1 + ")" )
+//					.appendTo( p );
+//					var firstIcon = $( '<i/>' )
+//					.addClass( 'material-icons' )
+//					.text( 'last_page' )
+//					.appendTo( firstAttr );
+//				}
+//			});
+//		},
+//		error: function ( res ) { }
+//	});
 }
 
 /* Pagination Todo List */
@@ -427,12 +452,36 @@ function handleTodoPagination( pageNum ) {
 				if ( pn == null ) {
 					return;
 				}
-				var p = $( 'div.pagination' )
+				var total = res.data.pageList.length;
+				var p = $( 'div.pagination' );
+				
+				if ( i == 0 ) {
+					var firstAttr = $( '<a/>' )
+					.attr( "onclick", "handleTodoPagination(" + 1 + ")" )
+					.addClass( 'select-page' )
+					.appendTo( p );
+					var firstIcon = $( '<i/>' )
+					.addClass( 'material-icons' )
+					.text( 'first_page' )
+					.appendTo( firstAttr );
+				}
+
 				var li = $( '<a id="pagnum' + pn + '" href="#">' + pn + '</a>' )
 					.attr( "onclick", "handleTodoPagination(" + pn + ")" )
 					.appendTo( p );
 				if ( pn == pageNum ) {
 					li.addClass( 'active' );
+				}
+				
+				if ( i == total - 1 ) {
+					var lastAttr = $( '<a/>' )
+					.attr( "onclick", "handleTodoPagination(" + 1 + ")" )
+					.addClass( 'select-page' )
+					.appendTo( p );
+					var lastIcon = $( '<i/>' )
+					.addClass( 'material-icons' )
+					.text( 'last_page' )
+					.appendTo( lastAttr );
 				}
 			});
 		},
