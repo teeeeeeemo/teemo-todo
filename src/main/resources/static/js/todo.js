@@ -97,7 +97,7 @@ function getTodoListBySearchOption( pn, searchOption, optionValue1, optionValue2
 			"Content-Type": "application/json"
 		},
 		success: function ( res ) {
-			if ( res.data.todoList.length == 0 ) {
+			if ( res.data.todoList.length == 0 && pn > 1) {
 				getTodoListBySearchOption( pn-1, searchOption, optionValue1, optionValue2 );
 				return;
 			}
@@ -173,14 +173,12 @@ function getTodoListForAdd( ele ) {
 		
 		if ( event.target.textContent == 'add' ) {
 			var parentTodo = event.target.parentNode.id;
-			console.log( parentTodo );
 			if ( typeof parentTodo == "undefined" 
 				 || parentTodo == null
 				 || parentTodo == "" ) {
 				parentTodo = event.target.id;
 			}
 			var requestUrl =  baseUrl + "/add-child/" + parentTodo;
-			console.log( requestUrl );
 			$.ajax({
 				type: "GET",
 				async: false,
@@ -223,14 +221,12 @@ function getTodoListForRemove( ele ) {
 		
 		if ( event.target.textContent == 'remove' ) {
 			var parentTodo = event.target.parentNode.id;
-			console.log( parentTodo );
 			if ( typeof parentTodo == "undefined" 
 				 || parentTodo == null
 				 || parentTodo == "" ) {
 				parentTodo = event.target.id;
 			}
 			var requestUrl =  baseUrl + "/remove-child/" + parentTodo;
-			console.log( requestUrl );
 			$.ajax({
 				type: "GET",
 				async: false,
@@ -401,7 +397,7 @@ function handleTodoPagination( pageNum ) {
 		},
 		success: function ( res ) {
 			
-			if ( res.data.todoList.length == 0 ) {
+			if ( res.data.todoList.length == 0 && pageNum > 1) {
 				handleTodoPagination( pageNum-1 );
 				return;
 			}
@@ -445,7 +441,6 @@ function checkAndUpdateDoneState( ele ) {
 		},
 		error: function ( res ) { }
 	});
-	console.log( "TTTT: " + isCompletable );
 	if ( isCompletable || isCompletable == undefined ) {
 		updateDoneState( itemId );
 	} else {
@@ -561,12 +556,9 @@ function createTodoChild( childId, parentId ) {
             	isCompletable = res.data.isCompletable;
             	doneState = res.data.isDone;
             },
-            error: function (data) { }
+            error: function ( res ) { }
         });
-    	console.log( "AAA: " + isCompletable );
-    	console.log( "BBB: " + doneState );
         if ( !isCompletable && doneState ) {
-        	console.log( "HERE" );
         	requestUrl = baseUrl + "/state/" + parentId;
         	var todoItem = {
             		isDone: false
@@ -576,21 +568,21 @@ function createTodoChild( childId, parentId ) {
                 type: "PUT",
                 url: requestUrl,
                 async: false,
-                success: function (data) {
+                success: function ( res ) {
                 	// Create new list item                        
                     var newListItem = $('<li/>')
-                        .attr("id", "item" + data.parentId);
+                        .attr("id", "item" + res.data.itemId);
                     
-                    if (data.isDone) {
+                    if (res.data.isDone) {
                         newListItem.addClass('completed')
                     }
-                    var todoRow = createTodoRow(newListItem, data);
+                    var todoRow = createTodoRow( res.data );
                     
                     // Replace the old one by the new one
                     var oldListItem = $("#item" + parentId);
                     oldListItem.replaceWith(newListItem);
                 },
-                error: function (data) { }
+                error: function ( res ) { }
             });
         }
     	
@@ -613,12 +605,17 @@ function createTaskRowForAdd( todoObj, parentTodo ) {
     	li.addClass( 'completed' )
     }
     
+    // Actions
+	var todoActions = $( '<span/>' )
+		.addClass( 'todo-actions' )
+		.appendTo( todoRow );
+    
     // Add Icon
     var addAttr = $('<a/>')
         .attr( "id", todoObj.itemId ) // to know item id!
         .attr( "onclick", "createTodoChild" + "(" + todoObj.itemId + "," + parentTodo + ")" )
         .addClass(' todo-added' )
-        .appendTo( todoRow );
+        .appendTo( todoActions );
 
     var addIcon = $( '<i/>' )
         .addClass( 'material-icons' )
@@ -642,15 +639,21 @@ function createTaskRowForRemove( todoObj, parentTodo ) {
     	.appendTo( li );
     
     if ( todoObj.isDone ) {
+    	console.log( "@@@" );
     	li.addClass( 'completed' )
     }
+    
+    // Actions
+	var todoActions = $( '<span/>' )
+		.addClass( 'todo-actions' )
+		.appendTo( todoRow );
     
     // Add Icon
     var addAttr = $('<a/>')
         .attr( "id", todoObj.itemId ) // to know item id!
         .attr( "onclick", "deleteTodoChild" + "(" + todoObj.itemId + "," + parentTodo + ")" )
         .addClass(' todo-added' )
-        .appendTo( todoRow );
+        .appendTo( todoActions );
 
     var addIcon = $( '<i/>' )
         .addClass( 'material-icons' )
@@ -665,15 +668,9 @@ function createTaskRowForRemove( todoObj, parentTodo ) {
 /* Set Modal Todo Info */
 function setModalTodoInfo( todoRow, todoObj ) {
 	//
-    // Task Name
-    var todoTitle = $( '<span/>' )
-        .addClass( 'todo-title' )
-        .text( todoObj.taskName )
-        .appendTo( todoRow );
-    
     // Todo Info
 	var todoInfo = $( '<span/>' )
-		.addClass( 'todo-info' )
+		.addClass( 'modal-todo-info' )
 		.appendTo( todoRow );
 	
 	// Todo Id
@@ -686,13 +683,12 @@ function setModalTodoInfo( todoRow, todoObj ) {
 		.attr( "id", "item" + todoObj.itemId )
 		.text( todoObj.itemId )
 		.appendTo( todoInfo );
-    
- 	// UpdatedAt
- 	var d = todoObj.updatedAt;
-    var updatedAt = $( '<span/>' )
-    	.addClass( 'todo-date' )
-        .text( moment(d).format( 'YYYY-MM-DD' ) )
-        .appendTo( todoInfo );
+	
+	// Task Name
+    var todoTitle = $( '<span/>' )
+        .addClass( 'todo-modal-title' )
+        .text( todoObj.taskName )
+        .appendTo( todoRow );
 }
 
 /* Create Todo Row */
@@ -727,9 +723,21 @@ function createTodoRow( todoObj ) {
 		.text( todoObj.taskName )
 		.appendTo( todoRow );
 	
-	// Todo Info
-	var todoInfo = $( '<span/>' )
-		.addClass( 'todo-info' )
+	// Todo Child
+	if( todoObj.todoChildList.length > 0 ) {
+    	var todoRef = '';
+    	var childItem = '';
+    	$.each( todoObj.todoChildList, function(i, item) {
+    		childItem = "@" + item.childId.toString();
+	        todoRef += childItem;
+		});
+    	todoTitle.attr("title", todoRef)
+    			 .addClass( 'todo-child' );
+    }
+	
+	// Todo Id
+	var todoId = $( '<span/>' )
+		.addClass( 'todo-id' )
 		.appendTo( todoRow );
 	
 	// Todo Id
@@ -737,11 +745,32 @@ function createTodoRow( todoObj ) {
 		.addClass( 'material-icons' )
 		.text( 'info' )
 		.attr( "title", "ITEM ID" )
-		.appendTo( todoInfo );
+		.appendTo( todoId );
 	var todoId = $( '<span/>' )
 		.attr( "id", "item" + todoObj.itemId )
 		.text( todoObj.itemId )
-		.appendTo( todoInfo );
+		.appendTo( todoId );
+	
+	// Todo Info
+	var todoInfo = $( '<span/>' )
+		.addClass( 'todo-info' )
+		.appendTo( todoId );
+	
+	// CreatedAt
+ 	var d = todoObj.createdAt;
+    var updatedAt = $( '<span/>' )
+    	.addClass( 'todo-info' )
+        .text(moment(d).format('YYYY-MM-DD'))
+        .attr( "title", "CreatedAt" )
+        .appendTo( todoInfo );
+    
+ 	// UpdatedAt
+ 	var d = todoObj.updatedAt;
+    var updatedAt = $( '<span/>' )
+    	.addClass( 'todo-info' )
+        .text(moment(d).format( 'YYYY-MM-DD' ))
+        .attr( "title", "UpdatedAt" )
+        .appendTo( todoInfo );
 	
 	// Actions
 	var todoActions = $( '<span/>' )
@@ -762,13 +791,16 @@ function createTodoRow( todoObj ) {
 	// Remove Child Icon
 	var removeAttr = $( '<a/>' )
 		.attr( "id", todoObj.itemId )
-		.attr( "onclick", "getTodoListForRemove( this )" )
+//		.attr( "onclick", "getTodoListForRemove( this )" )
 		.appendTo( todoActions );
 	var removeIcon = $( '<i/>' )
 		.addClass( 'material-icons' )
 		.text( 'remove' )
 		.attr( "title", "REMOVE-ReferenceTodo" )
 		.appendTo( removeAttr );
+	if( todoObj.todoChildList.length > 0 ) {
+		removeAttr.attr( "onclick", "getTodoListForRemove( this )" );
+    }
 	
 	// Edit Icon
 	var editAttr = $( '<a/>' )

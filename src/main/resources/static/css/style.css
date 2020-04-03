@@ -55,11 +55,12 @@ input {
 }
 
 .modal-content {
-	background-color: #FEFEFE;
+	background-color: #FFF;
 	margin: 15% auto; /* 15% from the top and centered */
-	padding: 20px;
+	padding: 40px;
 	border: 1px solid #888;
 	width: 50%; /* Could be more or less, depending on screen size */
+	height: calc(70% - 130px);;
 }
 
 .close {
@@ -154,20 +155,44 @@ select {
 }
 
 .todo-content .todo-title {
-	width: calc(50% - 130px);
+	width: calc(66% - 130px);
 	margin-left: 10px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.todo-content .todo-info {
+.todo-content .todo-modal-title {
+	width: calc(100% - 130px);
+	margin-left: 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.todo-content .todo-id {
 	/* margin-left: 20px; */
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: middle;
 	display: inline-block;
 	font-size: 17px;
-	padding-top: 2.39px;
+}
+
+.todo-content .todo-info {
+	margin-left: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	display: inline-block;
+	font-size: 13px;
+}
+
+.todo-content .modal-todo-info {
+	/* margin-left: 20px; */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	display: inline-block;
+	font-size: 13px;
 }
 
 .todo-content .todo-complteted {
@@ -205,6 +230,16 @@ select {
 
 
 /*****/
+
+.todo-child {
+	margin-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #0B87A1;
+    font-weight: bold;
+    cursor: pointer;
+}
+  
 .todo-content .input-search {
 	display: inline-block;
 	width: 20%;
@@ -227,7 +262,8 @@ select {
 }
 
 /* completed */
-li.completed .todo-title {
+li.completed .todo-title,
+li.completed .todo-modal-title {
 	text-decoration: line-through;
 	color: #757575;
 }
