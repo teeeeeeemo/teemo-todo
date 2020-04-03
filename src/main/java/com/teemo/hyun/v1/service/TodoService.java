@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,9 +63,19 @@ public class TodoService {
 	/* Todo List 조회 
 	 *  - Pagination 
 	 */
-	public List< TodoItem > getTodoListPagination( Integer pageNum ) {
+	public List< TodoItem > getTodoListPagination( Integer pageNum, String sortDirection ) {
 		//
-		Page< TodoItem > page = todoItemRepository.findAll( PageRequest.of( pageNum-1, PAGE_POST_COUNT, Sort.by( Sort.Direction.DESC, "createdAt" ) ) );
+		if ( StringUtils.isNoneEmpty( sortDirection ) ) {
+			if( ( !sortDirection.toUpperCase().equals( "ASC" ) ) && 
+				( !sortDirection.toUpperCase().equals( "DESC" ) ) ) {
+				throw new CBadRequestException( CommonConstant.Todo.BAD_REQUEST_SORT_DIRECTION );
+			}
+		} else {
+			sortDirection = "DESC"; // default sort direction: Decending
+		}
+		
+		Page< TodoItem > page = todoItemRepository.findAll( PageRequest.of( pageNum-1, PAGE_POST_COUNT, 
+																			Sort.by( Sort.Direction.fromString( sortDirection ), "createdAt" ) ) );
 		List< TodoItem > todoList = page.getContent();
 		List< TodoItem > todoItemList = new ArrayList<>();
 		

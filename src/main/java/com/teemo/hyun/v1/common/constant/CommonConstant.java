@@ -21,10 +21,11 @@ public class CommonConstant {
 		public static final String NOT_FOUND_CHILD_ID = "Not Found ChildId";
 		
 		/* Bad Request */
-		public static final String BAD_REQUEST 			 = "Bad Request Todo";
-		public static final String BAD_REQUEST_TASK_NAME = "Bad Request TaskName";
-		public static final String BAD_REQUEST_DATE 	 = "Bad Request Date";
-		public static final String BAD_REQUEST_CHILD_ID  = "Bad Request ChildId";
+		public static final String BAD_REQUEST 			 	  = "Bad Request Todo";
+		public static final String BAD_REQUEST_TASK_NAME 	  = "Bad Request TaskName";
+		public static final String BAD_REQUEST_DATE 		  = "Bad Request Date";
+		public static final String BAD_REQUEST_CHILD_ID  	  = "Bad Request ChildId";
+		public static final String BAD_REQUEST_SORT_DIRECTION = "Bad Request SortDirection - ASC / DESC";
 				
 		/* Date Format */
 		public static final String DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";

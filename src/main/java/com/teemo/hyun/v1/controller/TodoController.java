@@ -107,7 +107,9 @@ public class TodoController {
 																		   @RequestParam( value = "searchOption", required = false ) String searchOption, 
 																		   @RequestParam( value = "taskName", required = false ) String taskName,
 																		   @RequestParam( value = "fromDate", required = false ) String fromDate, 
-																		   @RequestParam( value = "toDate", required = false ) String toDate ) {
+																		   @RequestParam( value = "toDate", required = false ) String toDate,
+																		   @RequestParam( value = "sortDirection", required = false ) String sortDirection,
+																		   @RequestParam( value = "sortOption", required = false ) String sortOption ) {
 		//
 		logger.debug( "# START # " + new Object() {}.getClass().getEnclosingMethod().getName() + " ------------------------------------------------------------" );
 
@@ -221,7 +223,7 @@ public class TodoController {
 			}
 		}
 		pageList = todoService.getTodoPageListTotal( pageNum );
-		List< TodoItem > todoList = todoService.getTodoListPagination( pageNum );
+		List< TodoItem > todoList = todoService.getTodoListPagination( pageNum, sortDirection );
 		logger.debug( "######### Pages: " + Arrays.toString( pageList ) );
 		
 		resultMap.put( "lastPage", todoService.getTodoLastPageTotal( pageNum ) );
