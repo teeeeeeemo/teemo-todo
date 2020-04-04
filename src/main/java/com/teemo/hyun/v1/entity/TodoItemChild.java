@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 public class TodoItemChild {
 
 	@Id
-	@GeneratedValue( strategy = GenerationType.AUTO )
+	@GeneratedValue( strategy = GenerationType.IDENTITY )
 	@JsonIgnore
 	@Column( name = "id" )
 	private Long id;

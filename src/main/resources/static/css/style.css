@@ -101,10 +101,6 @@ input {
 }
 
 /* Sort */
-.todo-sort {
-	padding-left: 200px;
-}
-
 .sort-select {
 	width: 13%;
 	padding: .5em .3em; /* 여백으로 높이 설정 */

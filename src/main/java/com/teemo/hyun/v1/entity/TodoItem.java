@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 public class TodoItem {
 
 	@Id
-	@GeneratedValue( strategy = GenerationType.AUTO )
+	@GeneratedValue( strategy = GenerationType.IDENTITY )
 	@Column( name = "itemId" )
 	private Long itemId;
 	

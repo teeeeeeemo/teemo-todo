@@ -32,7 +32,7 @@
 		<h1 class="page-title">Teemo</h1>
 		
 		<div class="todo-search">
-			<select id="search-option" name="search-option" class="search-select">
+			<select id="search-option" name="search-option" class="search-select" title="Search Option">
 				<option value="option">    Option	</option>
 				<option value="doing">	   Doing	</option>
 				<option value="done">	   Done		</option>
@@ -45,13 +45,13 @@
 			<input type="button" value="Search" class="select-button" onclick="doSearch();">
 			
 			<span class="todo-sort">
-				<select id="sort-option" name="sort-option" class="sort-select">
+				<select id="sort-option" name="sort-option" class="sort-select" title="Sort Option">
 					<option value="createdAt">    createdAt	</option>
 					<option value="updatedAt">	  updatedAt	</option>
 					<option value="taskName">	  taskName  </option>
 				</select>
-				<a class="select-sort" id="asc" onclick="doSort('asc');"><i class="material-icons" >arrow_upward</i></a>
-				<a class="select-sort" id="desc" onclick="doSort('desc');"><i class="material-icons" >arrow_downward</i></a>
+				<a class="select-sort" id="asc" onclick="doSort('asc');"><i class="material-icons" title="Sort ASC">arrow_upward</i></a>
+				<a class="select-sort" id="desc" onclick="doSort('desc');"><i class="material-icons" title="Sort DESC">arrow_downward</i></a>
 			</span>
 		</div>
 

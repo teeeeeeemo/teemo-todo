@@ -48,22 +48,13 @@ $(document).ready( function() {
 function doSort( sortDirection ) {
 	//
 	if( sortDirection == 'asc' ) {
-		console.log( "sortDirection 111: " + sortDirection );
 		$( "#asc" ).addClass( "active" );
 		$( "#desc" ).removeClass( "active" );
 	} else {
-		console.log( "sortDirection 222: " + sortDirection );
 		$( "#desc" ).addClass( "active" );
 		$( "#asc" ).removeClass( "active" );
 	}
-	
-	var sortOption = $( "#sort-option" ).val();
-//	$( "#sort-option" ).addClass( "active" );
-	if ( $( "#search-option" ).val() != 'option' ) {
-		doSearch( sortDirection, sortOption );
-	} else {
-		handleTodoPagination( 1, sortDirection, sortOption );
-	}
+	getTodoList( 1 );
 }
 
 /* Init Search Option */
@@ -84,44 +75,28 @@ function doSearch( sortDirection, sortOption ) {
 	if ( searchOption == 'option' ) {
 		alert( 'Select Search Option' );
 	}
-	var pageNum = 1;
-	if( searchOption == 'task_name' ) {
-		if( $( "#input_task_name" ).val() == '' ) {
-			reloadTodoListWithOptions();
-			return;
-		}
-		getTodoListBySearchOption( pageNum, searchOption, $( "#input_task_name" ).val(), '', sortDirection, sortOption );
-	} else if ( searchOption == 'done' || searchOption == 'doing' ) {
-		getTodoListBySearchOption( pageNum, searchOption, '', '', sortDirection, sortOption );
-	} else if ( searchOption == 'date' ) {
-		if ( $( "#datepicker_from" ).val() == '' ) {
-			alert( 'Input from date to search' );
-			return;
-		} else if ( $( "#datepicker_to" ).val() == '' ) {
-			alert( 'Input to date to search' );
-			return;
-		}
-		getTodoListBySearchOption( pageNum, searchOption, $( "#datepicker_from" ).val(), $( "#datepicker_to" ).val(), sortDirection, sortOption );
-	}
+	getTodoList( 1 );
 }
 
-/* GET TodoList By SearchOption */
-function getTodoListBySearchOption( pn, searchOption, optionValue1, optionValue2, sortDirection, sortOption ) {
+/* GET TodoList NEW */
+function getTodoList( pn ) {
 	//
-	var requestUrl = baseUrl + "/pagination?page=" + pn + "&searchOption=" + searchOption;
+	var requestUrl = baseUrl + "/pagination?page=" + pn;
+	var searchOption = $( "#search-option" ).val();
 	
-	if ( !sortDirection == '' ) {
-		requestUrl += "&sortDirection=" + sortDirection;
-	}
-	if ( !sortOption == '' ) {
-		requestUrl += "&sortOption=" + sortOption;
+	if ( searchOption != 'option' ) {
+		requestUrl += "&searchOption=" + searchOption;
+		if( searchOption == 'task_name' && $( "#input_task_name" ).val() == '' ) {
+			requestUrl = baseUrl + "/pagination?page=" +pn;
+		} else if ( searchOption == 'task_name' ) {
+			requestUrl += "&taskName=" + $( "#input_task_name" ).val();
+		} else if ( searchOption == 'date' ) {
+			requestUrl += "&fromDate=" + $( "#datepicker_from" ).val() + "&toDate=" + $( "#datepicker_to" ).val();
+		} 
 	}
 	
-	if ( searchOption == 'date' ) {
-		requestUrl += "&fromDate=" + optionValue1 + "&toDate=" + optionValue2;
-	} else if ( searchOption == 'task_name' ) {
-		requestUrl += "&taskName=" + optionValue1;
-	}
+	requestUrl += "&sortDirection=" + $( '.todo-sort' ).children( '.active' ).attr( 'id' );
+	requestUrl += "&sortOption=" + $( "#sort-option" ).val();
 	
 	$.ajax({
 		type: "GET",
@@ -131,7 +106,7 @@ function getTodoListBySearchOption( pn, searchOption, optionValue1, optionValue2
 		},
 		success: function ( res ) {
 			if ( res.data.todoList.length == 0 && pn > 1) {
-				getTodoListBySearchOption( pn-1, searchOption, optionValue1, optionValue2, sortDirection, sortOption );
+				getTodoList( pn-1 );
 				return;
 			}
 			var cList = $( 'ul.todo-list' );
@@ -153,7 +128,7 @@ function getTodoListBySearchOption( pn, searchOption, optionValue1, optionValue2
 				
 				if ( i == 0 ) {
 					var firstAttr = $( '<a/>' )
-					.attr( "onclick", "getTodoListBySearchOption( " + 1 + ", '" + searchOption + "', '" + optionValue1 + "', '" + optionValue2 + "', '" + sortDirection + "', '" + sortOption +  "')" )
+					.attr( "onclick", "getTodoList( " + 1 + " )" )
 					.addClass( 'select-page' )
 					.attr( "title", "FirstPage" )
 					.appendTo( p );
@@ -164,7 +139,7 @@ function getTodoListBySearchOption( pn, searchOption, optionValue1, optionValue2
 				}
 
 				var li = $( '<a id="pagnum' + pageNum + '" href="#">' + pageNum + '</a>' )
-					.attr( "onclick", "getTodoListBySearchOption( " + pageNum + ", '" + searchOption + "', '" + optionValue1 + "', '" + optionValue2 + "', '" + sortDirection + "', '" + sortOption +  "')" )
+					.attr( "onclick", "getTodoList( " + pageNum + " ) "  )
 					.appendTo( p );
 				if ( pageNum == pn ) {
 					li.addClass( 'active' );
@@ -172,7 +147,7 @@ function getTodoListBySearchOption( pn, searchOption, optionValue1, optionValue2
 				
 				if ( i == total - 1 ) {
 					var lastAttr = $( '<a/>' )
-					.attr( "onclick", "getTodoListBySearchOption( " + res.data.lastPage + ", '" + searchOption + "', '" + optionValue1 + "', '" + optionValue2 + "', '" + sortDirection + "', '" + sortOption +  "')" )
+					.attr( "onclick", "getTodoList( " + res.data.lastPage + " )" )
 					.addClass( 'select-page' )
 					.attr( "title", "LastPage" )
 					.appendTo( p );
@@ -343,24 +318,7 @@ function putTodoItem( itemId, taskName ) {
 		data: requestJSON,
 		success: function ( res ) {
 			var pageNum = $( 'div' ).children( '.active' ).text();
-			var searchOption = $( "#search-option" ).val();
-			var optionValue1 = '';
-			var optionValue2 = '';
-			
-			var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
-			var sortOption = $( "#sort-option" ).val();
-			
-			if ( searchOption == 'option' ) {
-				handleTodoPagination( pageNum, sortDirection, sortOption );
-			} else {
-				if( searchOption == 'task_name' ) {
-					optionValue1 = $( "#input_task_name" ).val();
-				} else if ( searchOption == 'date' ) {
-					optionValue1 = $( "datepicker_from" ).val();
-					optionValue2 = $( "datepicker_to" ).val();
-				} 
-				getTodoListBySearchOption( pageNum, searchOption, optionValue1, optionValue2, sortDirection, sortOption );
-			}
+			getTodoList( pageNum );
 		},
 		error: function ( res ) { }
 	});
@@ -378,24 +336,7 @@ function deleteTodoItem( ele ) {
 		async: false,
 		success: function ( res ) {
 			var pageNum = $( 'div' ).children( '.active' ).text();
-			var searchOption = $( "#search-option" ).val();
-			var optionValue1 = '';
-			var optionValue2 = '';
-			
-			var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
-			var sortOption = $( "#sort-option" ).val();
-			
-			if ( searchOption == 'option' ) {
-				handleTodoPagination( pageNum, sortDirection, sortOption );
-			} else {
-				if( searchOption == 'task_name' ) {
-					optionValue1 = $( "#input_task_name" ).val();
-				} else if ( searchOption == 'date' ) {
-					optionValue1 = $( "datepicker_from" ).val();
-					optionValue2 = $( "datepicker_to" ).val();
-				} 
-				getTodoListBySearchOption( pageNum, searchOption, optionValue1, optionValue2, sortDirection, sortOption );
-			}
+			getTodoList( pageNum );
 		},
 		error: function ( res ) { }
 	});
@@ -433,108 +374,13 @@ function reloadTodoList() {
 	initSearchOption();
 	$( "#desc" ).addClass( "active" );
 	
-	var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
-	console.log( sortDirection );
-	var sortOption = $( "#sort-option" ).val();
-	handleTodoPagination( 1, sortDirection, sortOption );
+	getTodoList( 1 );
 }
 
 function reloadTodoListWithOptions() {
 	//
 	var pageNum = $( 'div' ).children( '.active' ).text();
-	var searchOption = $( "#search-option" ).val();
-	var optionValue1 = '';
-	var optionValue2 = '';
-	
-	var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
-	var sortOption = $( "#sort-option" ).val();
-	
-	if ( searchOption == 'option' ) {
-		handleTodoPagination( pageNum, sortDirection, sortOption );
-	} else {
-		if( searchOption == 'task_name' ) {
-			optionValue1 = $( "#input_task_name" ).val();
-		} else if ( searchOption == 'date' ) {
-			optionValue1 = $( "datepicker_from" ).val();
-			optionValue2 = $( "datepicker_to" ).val();
-		} 
-		getTodoListBySearchOption( pageNum, searchOption, optionValue1, optionValue2, sortDirection, sortOption );
-	}
-}
-
-/* Pagination Todo List */
-function handleTodoPagination( pageNum, sortDirection, sortOption ) {
-	//
-	var requestUrl = baseUrl + "/pagination?page=" + pageNum;
-	if ( !sortDirection == '' ) {
-		requestUrl += "&sortDirection=" + sortDirection;
-	}
-	if ( !sortOption == '' ) {
-		requestUrl += "&sortOption=" + sortOption;
-	}
-	
-	$.ajax({
-		type: "GET",
-		url: requestUrl,
-		async: false,
-		headers: {
-			"Content-Type": "application/json"
-		},
-		success: function ( res ) {
-			
-			if ( res.data.todoList.length == 0 && pageNum > 1) {
-				handleTodoPagination( pageNum-1, sortDirection, sortOption );
-				return;
-			}
-			var cList = $( 'ul.todo-list' );
-			cList.empty();
-			$.each( res.data.todoList, function( i, todoObj ) {
-				createTodoRow( todoObj );
-			});
-			var p = $( 'div.pagination' );
-			p.empty();
-			
-			$.each( res.data.pageList, function( i, pn ) {
-				if ( pn == null ) {
-					return;
-				}
-				var total = res.data.pageList.length;
-				var p = $( 'div.pagination' );
-				
-				if ( i == 0 ) {
-					var firstAttr = $( '<a/>' )
-					.attr( "onclick", "handleTodoPagination(" + 1 + ", '" + sortDirection + "', '" + sortOption + "' )" )
-					.addClass( 'select-page' )
-					.attr( "title", "FirstPage" )
-					.appendTo( p );
-					var firstIcon = $( '<i/>' )
-					.addClass( 'material-icons' )
-					.text( 'first_page' )
-					.appendTo( firstAttr );
-				}
-
-				var li = $( '<a id="pagnum' + pn + '" href="#">' + pn + '</a>' )
-					.attr( "onclick", "handleTodoPagination(" + pn + ", '" + sortDirection + "', '" + sortOption + "' )" )
-					.appendTo( p );
-				if ( pn == pageNum ) {
-					li.addClass( 'active' );
-				}
-				
-				if ( i == total - 1 ) {
-					var lastAttr = $( '<a/>' )
-					.attr( "onclick", "handleTodoPagination(" + res.data.lastPage + ", '" + sortDirection + "', '" + sortOption + "' )" )
-					.addClass( 'select-page' )
-					.attr( "title", "LastPage" )
-					.appendTo( p );
-					var lastIcon = $( '<i/>' )
-					.addClass( 'material-icons' )
-					.text( 'last_page' )
-					.appendTo( lastAttr );
-				}
-			});
-		},
-		error: function ( res ) { }
-	});
+	getTodoList( pageNum );
 }
 
 /* Check isCompletable and Update Done State */
@@ -572,24 +418,7 @@ function updateDoneState( itemId ) {
 				alert( 'Cannot be changed - With Parents' )
 			}
 			var pageNum = $( 'div' ).children( '.active' ).text();
-			var searchOption = $( "#search-option" ).val();
-			var optionValue1 = '';
-			var optionValue2 = '';
-			
-			var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
-			var sortOption = $( "#sort-option" ).val();
-			
-			if ( searchOption == 'option' ) {
-				handleTodoPagination( pageNum, sortDirection, sortOption );
-			} else {
-				if( searchOption == 'task_name' ) {
-					optionValue1 = $( "#input_task_name" ).val();
-				} else if ( searchOption == 'date' ) {
-					optionValue1 = $( "datepicker_from" ).val();
-					optionValue2 = $( "datepicker_to" ).val();
-				} 
-				getTodoListBySearchOption( pageNum, searchOption, optionValue1, optionValue2, sortDirection, sortOption );
-			}
+			getTodoList( pageNum );
 		},
 		error: function ( res ) { }
 	});
@@ -757,7 +586,6 @@ function createTaskRowForRemove( todoObj, parentTodo ) {
     	.appendTo( li );
     
     if ( todoObj.isDone ) {
-    	console.log( "@@@" );
     	li.addClass( 'completed' )
     }
     
@@ -861,7 +689,6 @@ function createTodoRow( todoObj ) {
                 async: false,
                 success: function ( res ) {
                 	if ( res.data.isDone ) {
-            			console.log( '!!!' );
             			childId.addClass( 'todo-child-completed' );
             		}
                 	childId.attr( "title", res.data.taskName );
