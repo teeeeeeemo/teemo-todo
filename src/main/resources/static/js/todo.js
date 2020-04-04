@@ -333,9 +333,6 @@ function putTodoItem( itemId, taskName ) {
 	var requestJSON = JSON.stringify( editedItem );
 	var requestUrl = baseUrl + "/" + itemId;
 	
-	var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
-	var sortOption = $( "#sort-option" ).val();
-	
 	$.ajax({
 		type: "PUT",
 		url: requestUrl,
@@ -349,6 +346,10 @@ function putTodoItem( itemId, taskName ) {
 			var searchOption = $( "#search-option" ).val();
 			var optionValue1 = '';
 			var optionValue2 = '';
+			
+			var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
+			var sortOption = $( "#sort-option" ).val();
+			
 			if ( searchOption == 'option' ) {
 				handleTodoPagination( pageNum, sortDirection, sortOption );
 			} else {
@@ -371,9 +372,6 @@ function deleteTodoItem( ele ) {
 	var itemId = $( ele ).attr( "id" );
 	var requestUrl =  baseUrl + "/" + itemId;
 	
-	var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
-	var sortOption = $( "#sort-option" ).val();
-	
 	$.ajax({
 		type: "DELETE",
 		url: requestUrl,
@@ -383,6 +381,10 @@ function deleteTodoItem( ele ) {
 			var searchOption = $( "#search-option" ).val();
 			var optionValue1 = '';
 			var optionValue2 = '';
+			
+			var sortDirection = $( '.todo-sort' ).children( '.active' ).attr( 'id' );
+			var sortOption = $( "#sort-option" ).val();
+			
 			if ( searchOption == 'option' ) {
 				handleTodoPagination( pageNum, sortDirection, sortOption );
 			} else {
