@@ -8,9 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,4 +46,12 @@ public class TodoItemChild {
 	@JoinColumn( name = "item_id" )
 	@JsonIgnore
 	private TodoItem todoItem;
+	
+	@JsonInclude( Include.NON_NULL )
+	@Transient
+	private String taskName;
+	
+	@JsonInclude( Include.NON_NULL )
+	@Transient
+	private Boolean isDone;
 }

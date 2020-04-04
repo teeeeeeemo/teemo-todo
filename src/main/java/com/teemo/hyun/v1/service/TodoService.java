@@ -170,6 +170,12 @@ public class TodoService {
 		TodoItem item = todoItemRepository.findById( itemId ).orElse( null );
 		if ( item == null ) {
 			throw new CNotFoundException( CommonConstant.Todo.NOT_FOUND );
+		} else if ( item.getTodoChildList().size() > 0 ) {
+			for( int i=0; i<item.getTodoChildList().size(); i++ ) {
+				TodoItem tempTodo = getTodoItemOne( item.getTodoChildList().get( i ).getChildId() );
+				item.getTodoChildList().get( i ).setTaskName( tempTodo.getTaskName() );
+				item.getTodoChildList().get( i ).setIsDone( tempTodo.getIsDone() );
+			}
 		}
 		return item;
 	}

@@ -257,8 +257,13 @@ input {
     overflow: hidden;
     text-overflow: ellipsis;
     color: #0B87A1;
-    font-weight: bold;
     cursor: pointer;
+    font-size: 14px;
+}
+
+.todo-child-completed {
+	text-decoration: line-through;
+	color: #111111;
 }
   
 .todo-content .input-search {

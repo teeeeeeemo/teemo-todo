@@ -843,14 +843,34 @@ function createTodoRow( todoObj ) {
 	
 	// Todo Child
 	if( todoObj.todoChildList.length > 0 ) {
-    	var todoRef = '';
-    	var childItem = '';
-    	$.each( todoObj.todoChildList, function(i, item) {
-    		childItem = "@" + item.childId.toString();
-	        todoRef += childItem;
-		});
-    	todoTitle.attr("title", todoRef)
-    			 .addClass( 'todo-child' );
+    	
+    	var todoChild = $( '<span/>' )
+    		.addClass( 'todo-child' )
+    		.appendTo( todoTitle );
+    	
+    	$.each( todoObj.todoChildList, function( i, item ) {
+    		
+    		var childId = $( '<span/>' )
+    			.text( "@" + item.childId )
+    			.appendTo( todoChild );
+    		
+            requestUrl = baseUrl + "/" + item.childId;
+            $.ajax({
+                type: "GET",
+                url: requestUrl,
+                async: false,
+                success: function ( res ) {
+                	if ( res.data.isDone ) {
+            			console.log( '!!!' );
+            			childId.addClass( 'todo-child-completed' );
+            		}
+                	childId.attr( "title", res.data.taskName );
+                },
+                error: function ( res ) { }
+            });
+            
+    	});
+    		
     }
 	
 	// Todo Id
@@ -940,7 +960,7 @@ function createTodoRow( todoObj ) {
 		.appendTo( deleteAttr );
 }
 
-/* For animation Wheh Deleting */ 
+/* For animation When Deleting */ 
 function cuteHide(el) {
 	el.animate({ opacity: '0' }, 300, function () {
 		el.animate({ height: '0px' }, 300, function () {
