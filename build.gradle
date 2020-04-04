@@ -4,6 +4,7 @@ plugins {
 }
 
 apply plugin: 'io.spring.dependency-management'
+mainClassName = 'com.teemo.hyun.Application'
 
 group = 'com.teemo.hyun'
 version = '0.0.1-SNAPSHOT'
