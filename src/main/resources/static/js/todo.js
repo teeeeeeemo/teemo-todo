@@ -1,4 +1,4 @@
-var baseUrl = "http://teeeeemo.iptime.org:3333/v1/todos";
+var baseUrl = "http://localhost:3333/v1/todos";
 
 $(document).ready( function() {
 	//
