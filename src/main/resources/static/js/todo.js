@@ -4,8 +4,6 @@ $(document).ready( function() {
 	//
 	$( document ).tooltip();
 	reloadTodoList();
-	initSearchOption();
-	$( "#desc" ).addClass( "active" );
 	
 	$( "#search-option" ).change( function () {
 		if ( $( this ).val() == 'task_name' ) {
@@ -373,7 +371,7 @@ function reloadTodoList() {
 	//
 	initSearchOption();
 	$( "#desc" ).addClass( "active" );
-	
+	$( "#asc" ).removeClass( "active" );
 	getTodoList( 1 );
 }
 
