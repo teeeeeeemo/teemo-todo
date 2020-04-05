@@ -257,6 +257,7 @@ public class TodoService {
 		todoItemRepository.delete( item );
 	}
 	
+	/* Todo Item Child 삭제 */
 	@Transactional
 	public void deleteTodoItemChild( Long parentId, Long childId ) {
 		//

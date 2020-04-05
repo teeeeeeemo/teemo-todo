@@ -1,3 +1,5 @@
+
+
 # teemo-todo
 
 ## Requirements
@@ -26,7 +28,10 @@
 	./gradlew build
 	./gradlew run
 	```
+![Build And Run](https://user-images.githubusercontent.com/25288225/78473043-905cc080-7778-11ea-8322-568fe076a4f3.png)
+
 3. Main Page URL: http://localhost:3333
+![Main Page](https://user-images.githubusercontent.com/25288225/78473088-d7e34c80-7778-11ea-9272-93f568940386.png)
 
 
 ## Document
