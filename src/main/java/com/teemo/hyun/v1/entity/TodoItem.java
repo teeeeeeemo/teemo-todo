@@ -66,6 +66,5 @@ public class TodoItem {
 	@JsonInclude( Include.NON_NULL )
 	@Transient
 	private Integer lastPage;
-	
 
 }
