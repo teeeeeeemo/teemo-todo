@@ -357,10 +357,11 @@ public class TodoService {
 		TodoItem todoItem = getTodoItemOne( itemId );
 		List< TodoItemChild > todoItemChildList = todoItem.getTodoChildList();
 		
+		todoItem.setIsCompletable( null );
 		for( TodoItemChild itemChild: todoItemChildList ) {
-			todoItem.setIsCompletable( null );
 			if ( !getTodoItemOne( itemChild.getChildId() ).getIsDone() ) {
 				todoItem.setIsCompletable( false );
+				return todoItem;
 			} else {
 				todoItem.setIsCompletable( true );
 			}
