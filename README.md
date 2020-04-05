@@ -1,4 +1,3 @@
-
 # teemo-todo
 
 ## Requirements
@@ -27,6 +26,8 @@
 	./gradlew build
 	./gradlew run
 	```
+3. Main Page URL: http://localhost:3333
+
 
 ## Document
 1. Postman 
